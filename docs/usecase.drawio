@@ -1,1 +1,103 @@
-<mxfile host="app.diagrams.net"><diagram name="Use Case L5" id="uc-l5"><mxGraphModel dx="1200" dy="880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="880" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="c2" value="Hệ thống Kho linh kiện thay thế (L5) – Smart CRM Mekong Mobile" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#1F3A5F;strokeWidth=2;verticalAlign=top;fontStyle=1;fontSize=13;spacingTop=6" vertex="1" parent="1"><mxGeometry x="230" y="30" width="640" height="810" as="geometry"/></mxCell><mxCell id="c3" value="&lt;b&gt;UC-03&lt;/b&gt; – Xuất linh kiện cho phiếu bảo hành" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="80" width="270" height="70" as="geometry"/></mxCell><mxCell id="c4" value="&lt;b&gt;UC-04&lt;/b&gt; – Kiểm tra số tồn trước khi xuất" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="210" width="270" height="70" as="geometry"/></mxCell><mxCell id="c5" value="&lt;b&gt;UC-01&lt;/b&gt; – Xem tồn kho linh kiện" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="340" width="270" height="70" as="geometry"/></mxCell><mxCell id="c6" value="&lt;b&gt;UC-02&lt;/b&gt; – Ghi nhận nhập kho" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="440" width="270" height="70" as="geometry"/></mxCell><mxCell id="c7" value="&lt;b&gt;UC-05&lt;/b&gt; – Xem cảnh báo tồn thấp" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="540" width="270" height="70" as="geometry"/></mxCell><mxCell id="c8" value="&lt;b&gt;UC-06&lt;/b&gt; – Xem lịch sử giao dịch linh kiện" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="640" width="270" height="70" as="geometry"/></mxCell><mxCell id="c9" value="&lt;b&gt;UC-07&lt;/b&gt; – Thiết lập ngưỡng tối thiểu" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" vertex="1" parent="1"><mxGeometry x="415" y="740" width="270" height="70" as="geometry"/></mxCell><mxCell id="c10" value="Kỹ thuật viên" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1" vertex="1" parent="1"><mxGeometry x="70" y="150" width="40" height="70" as="geometry"/></mxCell><mxCell id="c11" value="Quản lý trung tâm" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1" vertex="1" parent="1"><mxGeometry x="70" y="560" width="40" height="70" as="geometry"/></mxCell><mxCell id="c12" value="«hệ thống ngoài»&lt;br&gt;&lt;b&gt;Phân hệ quản lý phiếu bảo hành (L2)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#B8860B;fontSize=12" vertex="1" parent="1"><mxGeometry x="930" y="75" width="190" height="75" as="geometry"/></mxCell><mxCell id="c13" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c10" target="c3"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c14" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c10" target="c5"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c15" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c11" target="c5"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c16" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c11" target="c6"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c17" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c11" target="c7"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c18" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c11" target="c8"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c19" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c11" target="c9"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c20" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1" source="c12" target="c3"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c21" value="«include»" style="endArrow=open;endFill=0;dashed=1;html=1;strokeColor=#333333;fontSize=11;" edge="1" parent="1" source="c3" target="c4"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="c22" value="&lt;b&gt;Chú thích ký hiệu&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#888888;verticalAlign=top;fontSize=12;spacingTop=4" vertex="1" parent="1"><mxGeometry x="910" y="330" width="260" height="360" as="geometry"/></mxCell><mxCell id="c23" value="" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1"><mxGeometry x="924" y="370" width="18" height="34" as="geometry"/></mxCell><mxCell id="c24" value="Actor là người dùng (nằm NGOÀI ranh giới)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="960" y="370" width="202" height="36" as="geometry"/></mxCell><mxCell id="c25" value="«system»" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#B8860B;fontSize=8;" vertex="1" parent="1"><mxGeometry x="918" y="426" width="40" height="26" as="geometry"/></mxCell><mxCell id="c26" value="Actor không phải người (hệ thống ngoài)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="960" y="422" width="202" height="36" as="geometry"/></mxCell><mxCell id="c27" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;" vertex="1" parent="1"><mxGeometry x="918" y="476" width="40" height="24" as="geometry"/></mxCell><mxCell id="c28" value="Use case (mục tiêu của actor, đặt tên động từ + đối tượng)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="960" y="470" width="202" height="36" as="geometry"/></mxCell><mxCell id="c29" value="" style="endArrow=none;html=1;strokeColor=#333333;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="918" y="536" as="sourcePoint"/><mxPoint x="958" y="536" as="targetPoint"/></mxGeometry></mxCell><mxCell id="c30" value="Quan hệ giữa actor và use case" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="960" y="518" width="202" height="36" as="geometry"/></mxCell><mxCell id="c31" value="" style="endArrow=open;endFill=0;dashed=1;html=1;strokeColor=#333333;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="918" y="584" as="sourcePoint"/><mxPoint x="958" y="584" as="targetPoint"/></mxGeometry></mxCell><mxCell id="c32" value="«include»: use case nguồn luôn gọi use case đích" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="960" y="566" width="202" height="36" as="geometry"/></mxCell><mxCell id="c33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#1F3A5F;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="918" y="620" width="40" height="24" as="geometry"/></mxCell><mxCell id="c34" value="Ranh giới hệ thống L5" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1"><mxGeometry x="960" y="614" width="202" height="36" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="app.diagrams.net">
+  <diagram name="Use Case L5" id="uc-l5">
+    <mxGraphModel dx="1661" dy="850" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="880" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#1F3A5F;strokeWidth=2;verticalAlign=top;fontStyle=1;fontSize=13;spacingTop=6" value="Hệ thống Kho linh kiện thay thế (L5) – Smart CRM Mekong Mobile" vertex="1">
+          <mxGeometry height="810" width="640" x="230" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-03&lt;/b&gt; – Xuất linh kiện cho phiếu bảo hành" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-04&lt;/b&gt; – Kiểm tra số tồn trước khi xuất" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-01&lt;/b&gt; – Xem tồn kho linh kiện" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-02&lt;/b&gt; – Ghi nhận nhập kho" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-05&lt;/b&gt; – Xem cảnh báo tồn thấp" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-06&lt;/b&gt; – Xem lịch sử giao dịch linh kiện" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontSize=12" value="&lt;b&gt;UC-07&lt;/b&gt; – Thiết lập ngưỡng tối thiểu" vertex="1">
+          <mxGeometry height="70" width="270" x="415" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1" value="Kỹ thuật viên" vertex="1">
+          <mxGeometry height="70" width="40" x="70" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1" value="Quản lý trung tâm" vertex="1">
+          <mxGeometry height="70" width="40" x="70" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" edge="1" parent="1" source="c10" style="endArrow=none;html=1;strokeColor=#333333;" target="c3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" edge="1" parent="1" source="c10" style="endArrow=none;html=1;strokeColor=#333333;" target="c5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" edge="1" parent="1" source="c11" style="endArrow=none;html=1;strokeColor=#333333;" target="c5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" edge="1" parent="1" source="c11" style="endArrow=none;html=1;strokeColor=#333333;" target="c6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" edge="1" parent="1" source="c11" style="endArrow=none;html=1;strokeColor=#333333;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" edge="1" parent="1" source="c11" style="endArrow=none;html=1;strokeColor=#333333;" target="c8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" edge="1" parent="1" source="c11" style="endArrow=none;html=1;strokeColor=#333333;" target="c9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" edge="1" parent="1" source="c3" style="endArrow=open;endFill=0;dashed=1;html=1;strokeColor=#333333;fontSize=11;" target="c4" value="«include»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#888888;verticalAlign=top;fontSize=12;spacingTop=4" value="&lt;b&gt;Chú thích ký hiệu&lt;/b&gt;" vertex="1">
+          <mxGeometry height="310" width="260" x="910" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="" vertex="1">
+          <mxGeometry height="34" width="18" x="924" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="c24" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" value="Actor là người dùng (nằm NGOÀI ranh giới)" vertex="1">
+          <mxGeometry height="36" width="202" x="960" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="c27" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;" value="" vertex="1">
+          <mxGeometry height="24" width="40" x="918" y="424" as="geometry" />
+        </mxCell>
+        <mxCell id="c28" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" value="Use case (mục tiêu của actor, đặt tên động từ + đối tượng)" vertex="1">
+          <mxGeometry height="36" width="202" x="960" y="418" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" edge="1" parent="1" style="endArrow=none;html=1;strokeColor=#333333;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="918" y="480" as="sourcePoint" />
+            <mxPoint x="958" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c30" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" value="Quan hệ giữa actor và use case" vertex="1">
+          <mxGeometry height="36" width="202" x="960" y="468" as="geometry" />
+        </mxCell>
+        <mxCell id="c31" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;strokeColor=#333333;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="918" y="534" as="sourcePoint" />
+            <mxPoint x="958" y="534" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c32" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" value="«include»: use case nguồn luôn gọi use case đích" vertex="1">
+          <mxGeometry height="36" width="202" x="960" y="522" as="geometry" />
+        </mxCell>
+        <mxCell id="c33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#1F3A5F;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="24" width="40" x="918" y="586" as="geometry" />
+        </mxCell>
+        <mxCell id="c34" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=11;" value="Ranh giới hệ thống L5" vertex="1">
+          <mxGeometry height="36" width="202" x="960" y="580" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

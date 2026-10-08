@@ -1,0 +1,182 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="ERD L5" id="erd-l5">
+    <mxGraphModel dx="1493" dy="764" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#1a1a2e;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="MÔ HÌNH THỰC THỂ MỐI QUAN HỆ (ERD) – Kho linh kiện thay thế (Luồng L5, Track SE)" vertex="1">
+          <mxGeometry height="45" width="1120" x="50" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="tb_centers" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="service_centers" vertex="1">
+          <mxGeometry height="210" width="260" x="50" y="90" as="geometry">
+            <mxRectangle height="30" width="120" x="50" y="90" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_1" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="PK  center_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="260" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="c_2" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      center_code : VARCHAR(20) [UQ]" vertex="1">
+          <mxGeometry height="26" width="260" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="c_3" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      center_name : VARCHAR(120)" vertex="1">
+          <mxGeometry height="26" width="260" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_4" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      address : VARCHAR(255)" vertex="1">
+          <mxGeometry height="26" width="260" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="c_5" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      phone : VARCHAR(20)" vertex="1">
+          <mxGeometry height="26" width="260" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="c_6" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      is_active : BOOLEAN" vertex="1">
+          <mxGeometry height="26" width="260" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="c_7" parent="tb_centers" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      created_at : DATETIME" vertex="1">
+          <mxGeometry height="26" width="260" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="tb_stock" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;" value="part_stock" vertex="1">
+          <mxGeometry height="184" width="280" x="481" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="s_1" parent="tb_stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="PK  stock_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="280" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="s_2" parent="tb_stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="FK  center_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="280" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="s_3" parent="tb_stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="FK  part_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="280" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s_4" parent="tb_stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      quantity : INT [CHECK &amp;gt;= 0]" vertex="1">
+          <mxGeometry height="26" width="280" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="s_5" parent="tb_stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      min_threshold : INT [&amp;gt;= 0]" vertex="1">
+          <mxGeometry height="26" width="280" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="s_6" parent="tb_stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      updated_at : DATETIME" vertex="1">
+          <mxGeometry height="26" width="280" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="tb_parts" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="parts" vertex="1">
+          <mxGeometry height="236" width="260" x="894" y="99" as="geometry" />
+        </mxCell>
+        <mxCell id="p_1" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="PK  part_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="260" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p_2" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      part_code : VARCHAR(30) [UQ]" vertex="1">
+          <mxGeometry height="26" width="260" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="p_3" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      part_name : VARCHAR(150)" vertex="1">
+          <mxGeometry height="26" width="260" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p_4" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      category : VARCHAR(50)" vertex="1">
+          <mxGeometry height="26" width="260" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="p_5" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      unit : VARCHAR(20)" vertex="1">
+          <mxGeometry height="26" width="260" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="p_6" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      unit_price : DECIMAL(12,2)" vertex="1">
+          <mxGeometry height="26" width="260" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="p_7" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      is_active : BOOLEAN" vertex="1">
+          <mxGeometry height="26" width="260" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="p_8" parent="tb_parts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      created_at : DATETIME" vertex="1">
+          <mxGeometry height="26" width="260" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="tb_tickets" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="tickets" vertex="1">
+          <mxGeometry height="210" width="260" x="50" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="t_1" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="PK  ticket_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="260" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="t_2" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      ticket_code : VARCHAR(30) [UQ]" vertex="1">
+          <mxGeometry height="26" width="260" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="t_3" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="FK  center_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="260" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="t_4" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      status : VARCHAR(30)" vertex="1">
+          <mxGeometry height="26" width="260" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="t_5" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      customer_name : VARCHAR(120)" vertex="1">
+          <mxGeometry height="26" width="260" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="t_6" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      device_model : VARCHAR(100)" vertex="1">
+          <mxGeometry height="26" width="260" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="t_7" parent="tb_tickets" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      created_at : DATETIME" vertex="1">
+          <mxGeometry height="26" width="260" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="tb_tx" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fillColor=#fff2cc;strokeColor=#d6b656;" value="part_transactions" vertex="1">
+          <mxGeometry height="288" width="300" x="486" y="304" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_1" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="PK  transaction_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="300" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_2" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      transaction_code : VARCHAR(30) [UQ]" vertex="1">
+          <mxGeometry height="26" width="300" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_3" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="FK  center_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="300" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_4" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="FK  part_id : BIGINT" vertex="1">
+          <mxGeometry height="26" width="300" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_5" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;fontStyle=1;" value="FK  ticket_id : BIGINT [NULL được]" vertex="1">
+          <mxGeometry height="26" width="300" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_6" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      transaction_type : VARCHAR(10)" vertex="1">
+          <mxGeometry height="26" width="300" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_7" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      quantity : INT [CHECK &amp;gt; 0]" vertex="1">
+          <mxGeometry height="26" width="300" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_8" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      performed_by : VARCHAR(100)" vertex="1">
+          <mxGeometry height="26" width="300" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_9" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      note : VARCHAR(255)" vertex="1">
+          <mxGeometry height="26" width="300" y="236" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_10" parent="tb_tx" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=13;" value="      created_at : DATETIME" vertex="1">
+          <mxGeometry height="26" width="300" y="262" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_center_stock" edge="1" parent="1" source="c_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=10;endSize=10;strokeColor=#2b5797;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;labelBackgroundColor=#ffffff;" target="s_2" value="1 : N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_part_stock" edge="1" parent="1" source="tb_parts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=10;endSize=10;strokeColor=#2b5797;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;labelBackgroundColor=#ffffff;" target="s_3" value="1 : N">
+          <mxGeometry relative="1" x="-0.1278" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_center_ticket" edge="1" parent="1" source="tb_centers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=10;endSize=10;strokeColor=#2b5797;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;labelBackgroundColor=#ffffff;" target="tb_tickets" value="1 : N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_center_tx" edge="1" parent="1" source="c_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=10;endSize=10;strokeColor=#2b5797;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;labelBackgroundColor=#ffffff;entryX=0.002;entryY=0.072;entryDx=0;entryDy=0;entryPerimeter=0;" target="tx_4" value="1 : N">
+          <mxGeometry relative="1" x="0.1309" as="geometry">
+            <Array as="points">
+              <mxPoint x="414.9" y="157" />
+              <mxPoint x="414.9" y="411.9" />
+            </Array>
+            <mxPoint x="474.6" y="431.76" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_part_tx" edge="1" parent="1" source="tb_parts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=10;endSize=10;strokeColor=#2b5797;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="tx_4" value="1 : N">
+          <mxGeometry relative="1" x="0.0229" as="geometry">
+            <Array as="points">
+              <mxPoint x="851.5" y="217" />
+              <mxPoint x="851.5" y="423" />
+            </Array>
+            <mxPoint x="870" y="219.69" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_ticket_tx" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=10;endSize=10;strokeColor=#2b5797;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;labelBackgroundColor=#ffffff;" target="tx_5" value="0..1 : N">
+          <mxGeometry relative="1" x="0.2628" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="449" />
+            </Array>
+            <mxPoint x="340.03" y="449" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend_box" parent="1" style="rounded=1;arcSize=4;fillColor=#f5f5f5;strokeColor=#aaaaaa;strokeWidth=1;fontSize=13;align=left;spacingLeft=14;fontColor=#333333;fontFamily=Times New Roman;html=1;" value="&lt;b&gt;CHÚ THÍCH KÝ PHÁP CHÂN CHIM (CROW&#39;S FOOT) &amp;amp; RÀNG BUỘC THIẾT KẾ:&lt;/b&gt;&#xa;• &lt;b&gt;PK&lt;/b&gt; = Khóa chính (Primary Key)   |   &lt;b&gt;FK&lt;/b&gt; = Khóa ngoại (Foreign Key)   |   &lt;b&gt;UQ&lt;/b&gt; = Giá trị duy nhất (Unique)&#xa;• &lt;b&gt;||&lt;/b&gt;  (&lt;i&gt;ERmandOne&lt;/i&gt;): Đúng một (One and only one) – Một dòng bên 1 là bắt buộc duy nhất.&#xa;• &lt;b&gt;o|&lt;/b&gt;  (&lt;i&gt;ERzeroToOne&lt;/i&gt;): Không hoặc một (Zero or one) – Phiếu BH có thể chưa có linh kiện xuất nào; GD nhập thì ticket_id = NULL.&#xa;• &lt;b&gt;o&amp;lt;&lt;/b&gt;  (&lt;i&gt;ERzeroToMany&lt;/i&gt;): Không hoặc nhiều (Zero or many) – Bên N có thể có 0 hoặc nhiều dòng dữ liệu.&#xa;• &lt;b&gt;Ràng buộc toàn vẹn:&lt;/b&gt; quantity &amp;gt;= 0 (chặn âm kho NFR-02) | part_transactions là nhật ký Append-Only bất biến (NFR-04)." vertex="1">
+          <mxGeometry height="100" width="1100" x="50" y="650" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
