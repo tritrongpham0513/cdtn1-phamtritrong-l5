@@ -73,13 +73,13 @@ CREATE TABLE tickets (
     ticket_id     BIGINT AUTO_INCREMENT PRIMARY KEY,
     ticket_code   VARCHAR(30)  NOT NULL UNIQUE,               -- Ví dụ: BH-000456/2026 (Khóa nghiệp vụ)
     center_id     BIGINT       NOT NULL,                      -- Thuộc trung tâm bảo hành nào (QT-14)
-    status        VARCHAR(30)  NOT NULL DEFAULT 'TIEP_NHAN',  -- TIEP_NHAN, DANG_XU_LY, CHO_LINH_KIEN, HOAN_TAT, DA_DONG
+    status        VARCHAR(30)  NOT NULL DEFAULT 'TIEP_NHAN',  -- TIEP_NHAN, DA_PHAN_CONG, DANG_XU_LY, CHO_LINH_KIEN, HOAN_TAT, DA_DONG
     customer_name VARCHAR(120) NOT NULL,                      -- Tên khách hàng mang máy đến
     device_model  VARCHAR(100) NOT NULL,                      -- Model thiết bị (iPhone 15, Oppo Reno 5...)
     created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_tickets_center FOREIGN KEY (center_id) REFERENCES service_centers(center_id) ON DELETE RESTRICT,
-    CONSTRAINT chk_tickets_status CHECK (status IN ('TIEP_NHAN', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_DONG'))
+    CONSTRAINT chk_tickets_status CHECK (status IN ('TIEP_NHAN', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_DONG'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
@@ -92,8 +92,8 @@ CREATE TABLE part_transactions (
     transaction_code VARCHAR(30)  NOT NULL UNIQUE,            -- Mã giao dịch (GD-NK-202610-001, GD-XK-202610-002)
     center_id        BIGINT       NOT NULL,                   -- Trung tâm bảo hành phát sinh giao dịch
     part_id          BIGINT       NOT NULL,                   -- Linh kiện được nhập hoặc xuất
-    ticket_id        BIGINT       NULL,                       -- Phiếu BH (Bắt buộc với XUAT, NULL với NHAP)
-    transaction_type VARCHAR(10)  NOT NULL,                   -- NHAP hoặc XUAT (QT-L5-01, QT-L5-02)
+    ticket_id        BIGINT       NULL,                       -- Phiếu BH (Bắt buộc với EXPORT, NULL với IMPORT)
+    transaction_type VARCHAR(10)  NOT NULL,                   -- IMPORT hoặc EXPORT (QT-L5-01, QT-L5-02)
     quantity         INT          NOT NULL,                   -- Số lượng linh kiện giao dịch
     performed_by     VARCHAR(100) NOT NULL,                   -- Nhân viên / KTV thực hiện (NFR-04)
     note             VARCHAR(255) NULL,                       -- Ghi chú bổ sung
@@ -102,7 +102,7 @@ CREATE TABLE part_transactions (
     CONSTRAINT fk_tx_center FOREIGN KEY (center_id) REFERENCES service_centers(center_id) ON DELETE RESTRICT,
     CONSTRAINT fk_tx_part   FOREIGN KEY (part_id)   REFERENCES parts(part_id) ON DELETE RESTRICT,
     CONSTRAINT fk_tx_ticket FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE RESTRICT,
-    CONSTRAINT chk_tx_type  CHECK (transaction_type IN ('NHAP', 'XUAT')),
+    CONSTRAINT chk_tx_type  CHECK (transaction_type IN ('IMPORT', 'EXPORT')),
     CONSTRAINT chk_tx_qty   CHECK (quantity > 0)              -- Số lượng nhập/xuất phải nguyên dương (> 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -165,5 +165,5 @@ INSERT INTO tickets (ticket_code, center_id, status, customer_name, device_model
 
 -- Lịch sử giao dịch ban đầu (Append-Only Log)
 INSERT INTO part_transactions (transaction_code, center_id, part_id, ticket_id, transaction_type, quantity, performed_by, note) VALUES
-('GD-NK-202610-001', 1, 1, NULL, 'NHAP', 20, 'Quản lý kho - Nguyễn Trí Hải', 'Nhập kho định kỳ đầu tháng từ NPP'),
-('GD-XK-202610-001', 1, 1, 1,    'XUAT', 5,  'KTV - Phạm Trí Trọng',          'Xuất thay pin cho phiếu BH-000456/2026');
+('GD-NK-202610-001', 1, 1, NULL, 'IMPORT', 20, 'Quản lý kho - Nguyễn Trí Hải', 'Nhập kho định kỳ đầu tháng từ NPP'),
+('GD-XK-202610-001', 1, 1, 1,    'EXPORT', 5,  'KTV - Phạm Trí Trọng',          'Xuất thay pin cho phiếu BH-000456/2026');
