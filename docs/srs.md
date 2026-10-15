@@ -55,7 +55,7 @@ Module **L5 – Kho linh kiện thay thế** được xây dựng nhằm số h�
 |---|---|---|
 | **Phiếu bảo hành** | Một yêu cầu bảo hành hoặc sửa chữa được ghi nhận, có mã duy nhất và vòng đời trạng thái | `ticket` |
 | **Mã phiếu bảo hành** | Mã hiển thị của phiếu bảo hành, dạng `BH-000123/2026` | `ticket_code` |
-| **Trạng thái phiếu** | Vị trí hiện tại của phiếu bảo hành trong vòng đời: Mới → Đã phân công → Đang xử lý → Chờ linh kiện → Hoàn tất → Đã đóng | `status` |
+| **Trạng thái phiếu** | Vị trí hiện tại trong vòng đời phiếu bảo hành: Tiếp nhận (TIEP_NHAN) → Đã phân công (DA_PHAN_CONG) → Đang xử lý (DANG_XU_LY) → Chờ linh kiện (CHO_LINH_KIEN) → Hoàn tất (HOAN_TAT) → Đã đóng (DA_DONG) | `status` *(các giá trị: `TIEP_NHAN`, `DA_PHAN_CONG`, `DANG_XU_LY`, `CHO_LINH_KIEN`, `HOAN_TAT`, `DA_DONG`)* |
 | **Kỹ thuật viên** | Nhân viên thực hiện sửa chữa, có danh sách tay nghề và địa bàn làm việc | `technician` |
 | **Quản lý trung tâm** | Nhân viên phụ trách vận hành một trung tâm bảo hành, có quyền nhập kho và cấu hình ngưỡng tối thiểu | `center_manager` |
 | **Trung tâm bảo hành** | Cơ sở nơi thực hiện bảo hành (Mekong Mobile có 6 trung tâm bảo hành) | `service_center` |
@@ -65,7 +65,7 @@ Module **L5 – Kho linh kiện thay thế** được xây dựng nhằm số h�
 | **Số tồn** | Số lượng hiện có của một linh kiện tại một trung tâm bảo hành; luôn ≥ 0 | `quantity` |
 | **Ngưỡng tối thiểu** | Mức số tồn mà dưới đó hệ thống hiển thị cảnh báo tồn thấp | `min_threshold` |
 | **Cảnh báo tồn thấp** | Thông báo hiển thị khi số tồn của một linh kiện < ngưỡng tối thiểu | `isLowStock` |
-| **Giao dịch linh kiện** | Một lần nhập kho hoặc xuất kho linh kiện, ghi nhận đầy đủ ai, khi nào, bao nhiêu | `part_transaction` |
+| **Giao dịch linh kiện** | Một lần nhập kho hoặc xuất kho linh kiện, ghi nhận đầy đủ ai, khi nào, bao nhiêu. Bảng lưu vết CSDL là part_transactions | `part_transactions` *(bảng CSDL)* / `part_transaction` *(bản ghi)* |
 | **Nhập kho** | Loại giao dịch linh kiện ghi nhận linh kiện về trung tâm bảo hành, làm **tăng** số tồn | `IMPORT` *(giá trị của `transaction_type`)* |
 | **Xuất kho** | Loại giao dịch linh kiện ghi nhận linh kiện lấy ra để sửa chữa, bắt buộc gắn với một phiếu bảo hành, làm **giảm** số tồn | `EXPORT` *(giá trị của `transaction_type`)* |
 | **Lịch sử giao dịch linh kiện** | Danh sách các giao dịch linh kiện đã ghi nhận, xem theo linh kiện, khoảng ngày hoặc phiếu bảo hành | — |
@@ -192,7 +192,7 @@ Module **L5 – Kho linh kiện thay thế** được xây dựng nhằm số h�
 | **SHOULD** | US-05, US-06, US-07 | 3 | Hiện thực trong BT2 nếu kịp tiến độ |
 | **COULD** | US-08 | 1 | Tính năng mở rộng |
 | **WON'T** | Đặt hàng nhà cung cấp tự động; điều chuyển linh kiện giữa các trung tâm bảo hành; dự báo nhu cầu bằng AI/ML; thanh toán trực tuyến (xem mục 1.3) | — | Không làm trong học phần CĐTN1 |
-| **Tổng cộng** | | **8** | Mỗi story có mã US, mức MoSCoW và tiêu chí chấp nhận Given–When–Then |
+| **Tổng cộng** | | **8** | Toàn bộ 8 story có mã US, phân loại MoSCoW, tiêu chí GWT; vượt mức tối thiểu đề bài (5–7 story), bao phủ toàn diện luồng L5 |
 
 ---
 
@@ -240,7 +240,7 @@ Module **L5 – Kho linh kiện thay thế** được xây dựng nhằm số h�
 | **FR-04** | Chặn xuất vượt quá số tồn kho | US-04 | UC-04 – Kiểm tra số tồn trước khi xuất | **MUST** | `part_stock` (ràng buộc `quantity >= 0`) | **M2** (Thông báo lỗi chặn xuất) |
 | **FR-05** | Cảnh báo tồn kho dưới ngưỡng tối thiểu | US-05 | UC-05 – Xem cảnh báo tồn thấp | **SHOULD** | `part_stock` (`quantity < min_threshold`) | **M1** (Badge Cảnh báo tồn thấp) |
 | **FR-06** | Xem lịch sử giao dịch linh kiện | US-06, US-07 | UC-06 – Xem lịch sử giao dịch linh kiện | **SHOULD** | `part_transactions`, `parts`, `tickets` | **M3** – Lịch sử giao dịch |
-| **FR-07** | Thiết lập ngưỡng cảnh báo tối thiểu | US-08 | UC-07 – Thiết lập ngưỡng tối thiểu | **COULD** | `part_stock` (`min_threshold`) | **M1** – Cửa sổ cài đặt ngưỡng |
+| **FR-07** | Thiết lập ngưỡng cảnh báo tối thiểu | US-08 | UC-07 – Thiết lập ngưỡng tối thiểu | **COULD** | `part_stock` (`min_threshold`) | **M1** – Danh sách tồn kho (Modal cài đặt ngưỡng) |
 
 #### Nguyên tắc kiểm chứng ma trận:
 - **Đọc theo HÀNG (Mỗi yêu cầu đủ chân liên kết):** 100% yêu cầu chức năng (FR-01 đến FR-07) đều được điền đầy đủ User Story, Use Case, Bảng dữ liệu và Màn hình giao diện tương ứng — **tuyệt đối không có ô trống**. Các tính năng ngoài phạm vi (WON'T) được đặc tả riêng tại Mục 1.3.
