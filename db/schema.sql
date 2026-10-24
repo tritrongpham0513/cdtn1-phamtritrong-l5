@@ -130,40 +130,7 @@ CREATE INDEX idx_tx_ticket ON part_transactions(ticket_id);
 CREATE INDEX idx_tx_part_created ON part_transactions(part_id, created_at);
 
 -- =============================================================================
--- DỮ LIỆU KHỞI TẠO MẪU (SEED DATA) PHỤC VỤ CHẠY THỬ VÀ KIỂM CHỨNG
+-- DỮ LIỆU KHỞI TẠO (SEED DATA)
+-- Toàn bộ dữ liệu được tự động nạp từ các tệp CSV của Case Study (data/*.csv)
+-- thông qua DataInitializer.java khi khởi chạy ứng dụng (Đáp ứng Tiêu chí C1 & S3).
 -- =============================================================================
-
--- Trung tâm bảo hành mẫu
-INSERT INTO service_centers (center_code, center_name, address, phone) VALUES
-('TT-CT1', 'Trung tâm Bảo hành Mekong Cần Thơ 1', 'Số 123 đường 30/4, Ninh Kiều, Cần Thơ', '0292.3888.999'),
-('TT-Q10', 'Trung tâm Bảo hành Mekong Quận 10', 'Số 456 đường 3/2, Quận 10, TP. Hồ Chí Minh', '028.3999.888');
-
--- Danh mục linh kiện mẫu
-INSERT INTO parts (part_code, part_name, category, unit, unit_price) VALUES
-('PIN-IP15',   'Pin zin Apple iPhone 15 dung lượng 3349mAh', 'PIN',      'Cái', 850000.00),
-('LCD-IP15',   'Màn hình Super Retina XDR iPhone 15',        'MAN_HINH', 'Cái', 3200000.00),
-('PIN-SS-S24', 'Pin Samsung Galaxy S24 tiêu chuẩn',          'PIN',      'Cái', 720000.00),
-('MH-OP-R5',   'Màn hình AMOLED Oppo Reno 5',                'MAN_HINH', 'Cái', 1450000.00),
-('SAC-IP15',   'Cổng sạc USB-C flex cable iPhone 15',        'LINH_KIEN','Cái', 350000.00);
-
--- Số lượng tồn kho ban đầu theo trung tâm
-INSERT INTO part_stock (center_id, part_id, quantity, min_threshold) VALUES
-(1, 1, 15, 5),   -- Cần Thơ 1: Pin IP15 (tồn 15, ngưỡng 5 -> Đủ hàng)
-(1, 2, 4,  5),   -- Cần Thơ 1: Màn hình IP15 (tồn 4, ngưỡng 5 -> CẢNH BÁO TỒN THẤP US-05)
-(1, 3, 8,  3),   -- Cần Thơ 1: Pin S24 (tồn 8, ngưỡng 3 -> Đủ hàng)
-(1, 4, 2,  3),   -- Cần Thơ 1: Màn hình Reno 5 (tồn 2, ngưỡng 3 -> CẢNH BÁO TỒN THẤP)
-(1, 5, 6,  5),   -- Cần Thơ 1: Cổng sạc IP15 (tồn 6, ngưỡng 5 -> Đủ hàng)
-(2, 1, 20, 5),   -- Quận 10: Pin IP15 (tồn 20, ngưỡng 5)
-(2, 4, 0,  2);   -- Quận 10: Màn hình Reno 5 (tồn 0 -> Hết hàng AC-4.3)
-
--- Phiếu bảo hành mẫu (từ luồng L2)
-INSERT INTO tickets (ticket_code, center_id, status, customer_name, device_model) VALUES
-('BH-000456/2026', 1, 'DANG_XU_LY',    'Nguyễn Văn An',  'Apple iPhone 15'),
-('BH-000457/2026', 1, 'CHO_LINH_KIEN', 'Trần Thị Mai',   'Oppo Reno 5'),
-('BH-000789/2026', 1, 'DA_DONG',       'Lê Hoàng Long',  'Samsung Galaxy S24'),
-('BH-000111/2026', 2, 'DANG_XU_LY',    'Phạm Quốc Huy',  'Apple iPhone 15');
-
--- Lịch sử giao dịch ban đầu (Append-Only Log)
-INSERT INTO part_transactions (transaction_code, center_id, part_id, ticket_id, transaction_type, quantity, performed_by, note) VALUES
-('GD-NK-202610-001', 1, 1, NULL, 'IMPORT', 20, 'Quản lý kho - Nguyễn Trí Hải', 'Nhập kho định kỳ đầu tháng từ NPP'),
-('GD-XK-202610-001', 1, 1, 1,    'EXPORT', 5,  'KTV - Phạm Trí Trọng',          'Xuất thay pin cho phiếu BH-000456/2026');
