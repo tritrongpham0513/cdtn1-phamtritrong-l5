@@ -25,3 +25,7 @@ logs/
 .DS_Store
 Thumbs.db
 *.docx.txt
+
+# Dataset raw (large simulated files)
+data/dataset/
+

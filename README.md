@@ -25,7 +25,8 @@ Hệ thống giải quyết bài toán quản lý kho linh kiện thay thế t�
 4. `mvn spring-boot:run` -> Mở kiểm tra tại `http://localhost:8080/api/health`
 
 ## 4. Cấu trúc thư mục
-- `docs/`: Chứa bản đặc tả yêu cầu SRS (`srs.md`), file vẽ gốc (`.drawio`), tài liệu API contract và bảng khai báo sử dụng AI.
+- `docs/`: Chứa bản đặc tả yêu cầu SRS (`srs.md`), tài liệu API contract (`api-contract.md`), nhật ký thay đổi thiết kế (`thay-doi-thiet-ke.md`), bảng khai báo sử dụng AI (`ai-declaration.md`) và các file vẽ gốc (`.drawio`, `.fig`).
+- `db/`: Chứa mã kịch bản khởi tạo CSDL MySQL 8.x (`schema.sql`) và dữ liệu khởi tạo.
 - `src/`: Mã nguồn ứng dụng backend Spring Boot REST API và frontend prototype.
 - `tests/`: Kịch bản kiểm thử tự động (JUnit 5 unit test & integration test).
 - `data/`: Dữ liệu mẫu CSV của case study Mekong Mobile.
@@ -35,5 +36,8 @@ Hệ thống giải quyết bài toán quản lý kho linh kiện thay thế t�
 
 ## 6. Trạng thái hiện tại
 - [x] Khởi tạo project, dựng cấu trúc chuẩn và smoke test môi trường (Buổi 2)
+- [x] Hoàn thiện tài liệu kiến trúc, API contract, DDL CSDL và nhật ký thay đổi thiết kế theo phản hồi GVHD (`docs/thay-doi-thiet-ke.md`) (Buổi 8 - Chặng 1)
+- [ ] Xây dựng module cốt lõi Sprint 1: Controller, Service, Repository, DTO và Entity (Buổi 8 - Chặng 2)
 - [ ] Module nhập kho và tra cứu số tồn theo trung tâm (Buổi 8–10)
 - [ ] Module xuất linh kiện theo phiếu bảo hành, chặn xuất quá tồn & cảnh báo tồn tối thiểu (Buổi 10–12)
+
