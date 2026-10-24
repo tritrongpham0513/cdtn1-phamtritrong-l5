@@ -89,6 +89,19 @@ Phản hồi phân trang:
 | **409** | Conflict | Xuất vượt tồn kho hoặc tranh chấp đồng thời |
 | **500** | Internal Server Error | Lỗi hệ thống không mong đợi |
 
+### 1.6. Quy ước ánh xạ giữa DTO API và CSDL
+Để đảm bảo tính nhất quán 100% giữa hợp đồng API và mô hình CSDL (`db/schema.sql`), hệ thống quy ước ánh xạ như sau:
+
+| Trường DTO API | Kiểu dữ liệu JSON | Cột CSDL tương ứng (`MySQL 8.x`) | Giải thích ánh xạ kỹ thuật |
+|---|---|---|---|
+| `partId` | string | `parts.part_code` | Mã linh kiện nghiệp vụ (ví dụ: `"LCD-IP15"`). Tầng Service sẽ query chuyển đổi sang khóa chính `parts.part_id` (`BIGINT`). |
+| `partStockId` | integer | `part_stock.stock_id` | Khóa chính bản ghi tồn kho linh kiện tại trung tâm. |
+| `ticketId` | string | `tickets.ticket_code` | Mã phiếu bảo hành (ví dụ: `"BH-000456/2026"`). Tầng Service sẽ query chuyển đổi sang `tickets.ticket_id` (`BIGINT`) khi ghi log `part_transactions.ticket_id`. |
+| `transactionId` | integer | `part_transactions.transaction_id` | Khóa chính bản ghi giao dịch kho. |
+| `transactionType` | string | `part_transactions.transaction_type` | Loại giao dịch: `"IMPORT"` hoặc `"EXPORT"` (khớp ràng buộc `chk_tx_type`). |
+| `isLowStock` | boolean | *(Computed / Virtual)* | `true` khi `part_stock.quantity < part_stock.min_threshold` (theo FR-05, US-05). |
+| `serviceCenterId` | integer | `service_centers.center_id` | Khóa ngoại xác định trung tâm bảo hành của người dùng / giao dịch (QT-14). |
+
 ---
 
 ## 2. Xác thực và phân quyền
@@ -213,7 +226,8 @@ Token chứa thông tin `role` và `service_center_id`. Hệ thống kiểm tra 
 ### 4.3. `GET /api/parts/stock` — Xem tồn kho linh kiện
 
 > **FR-01 / UC-01 / US-01** — Hiển thị danh sách linh kiện của trung tâm người dùng đang đăng nhập.  
-> **Quyền:** Kỹ thuật viên ✅ · Quản lý trung tâm ✅
+> **Quyền:** Kỹ thuật viên ✅ · Quản lý trung tâm ✅  
+> **Quy tắc:** QT-14, NFR-01 (Thời gian phản hồi ≤ 500 ms cho 95% request)
 
 **Query Parameters:**
 
@@ -346,7 +360,8 @@ Token chứa thông tin `role` và `service_center_id`. Hệ thống kiểm tra 
 
 > **FR-03 + FR-04 / UC-03 + UC-04 / US-03 + US-04** — Kỹ thuật viên xuất linh kiện gắn với phiếu bảo hành. Hệ thống tự động kiểm tra tồn kho trước khi xuất (UC-04 `«include»`).  
 > **Quyền:** Kỹ thuật viên ✅ · Quản lý trung tâm ❌  
-> **Quy tắc:** QT-06, QT-09, QT-13, QT-14, QT-L5-02, QT-L5-03, NFR-02
+> **Quy tắc:** QT-06, QT-09, QT-13, QT-14, QT-L5-02, QT-L5-03, NFR-02  
+> **Lưu ý trạng thái phiếu (QT-06):** Vòng đời phiếu bảo hành gồm 6 trạng thái: `TIEP_NHAN` → `DA_PHAN_CONG` → `DANG_XU_LY` → `CHO_LINH_KIEN` → `HOAN_TAT` → `DA_DONG`. Luồng L5 chỉ đọc dữ liệu và chỉ cho phép xuất kho khi phiếu ở trạng thái `DANG_XU_LY` hoặc `CHO_LINH_KIEN`.
 
 **Request Body:**
 
@@ -362,7 +377,7 @@ Token chứa thông tin `role` và `service_center_id`. Hệ thống kiểm tra 
 |---|---|:---:|---|
 | `partId` | string | ✅ | Mã linh kiện phải tồn tại trong danh mục |
 | `quantity` | integer | ✅ | Số nguyên > 0 (QT-L5-02) |
-| `ticketId` | string | ✅ | Mã phiếu bảo hành phải tồn tại, cùng trung tâm, trạng thái **Đang xử lý** hoặc **Chờ linh kiện** (QT-06, QT-L5-02) |
+| `ticketId` | string | ✅ | Mã phiếu bảo hành phải tồn tại, cùng trung tâm, trạng thái **Đang xử lý** (`DANG_XU_LY`) hoặc **Chờ linh kiện** (`CHO_LINH_KIEN`) (QT-06, QT-L5-02) |
 
 **Response `201 Created` (AC-3.1, AC-4.2):**
 
@@ -413,7 +428,7 @@ Token chứa thông tin `role` và `service_center_id`. Hệ thống kiểm tra 
   "success": false,
   "error": {
     "code": "INVALID_TICKET_STATUS",
-    "message": "Không thể xuất linh kiện cho phiếu đã đóng"
+    "message": "Không thể xuất linh kiện cho phiếu có trạng thái không hợp lệ (trạng thái: DA_DONG, chỉ chấp nhận DANG_XU_LY hoặc CHO_LINH_KIEN)"
   }
 }
 ```
@@ -491,7 +506,7 @@ Token chứa thông tin `role` và `service_center_id`. Hệ thống kiểm tra 
 
 > **FR-06 / UC-06 / US-06** — Quản lý trung tâm xem lịch sử giao dịch linh kiện, lọc theo linh kiện hoặc khoảng ngày.  
 > **Quyền:** Quản lý trung tâm ✅ · Kỹ thuật viên ❌  
-> **Quy tắc:** QT-14, NFR-04
+> **Quy tắc:** QT-14, NFR-01 (Thời gian phản hồi ≤ 500 ms cho 95% request), NFR-04
 
 **Query Parameters:**
 
@@ -702,7 +717,7 @@ Tổng hợp tất cả mã lỗi nghiệp vụ (`error.code`) mà API có thể
 | `PART_NOT_FOUND` | 400 | Mã linh kiện không tồn tại trong danh mục | AC-2.3 |
 | `INVALID_QUANTITY` | 400 | Số lượng nhập/xuất ≤ 0 hoặc không phải số nguyên | QT-L5-01, QT-L5-02, AC-2.2 |
 | `INSUFFICIENT_STOCK` | 409 | Số lượng xuất vượt tồn kho hiện tại | QT-09, QT-L5-03, AC-4.1, AC-4.3 |
-| `INVALID_TICKET_STATUS` | 400 | Phiếu bảo hành không ở trạng thái hợp lệ | QT-06, QT-L5-02, AC-3.2 |
+| `INVALID_TICKET_STATUS` | 400 | Phiếu bảo hành không ở trạng thái hợp lệ (chỉ chấp nhận DANG_XU_LY hoặc CHO_LINH_KIEN) | QT-06, QT-L5-02, AC-3.2 |
 | `TICKET_NOT_FOUND` | 404 | Mã phiếu bảo hành không tồn tại | QT-L5-02 |
 | `TICKET_CENTER_MISMATCH` | 403 | Phiếu bảo hành không thuộc trung tâm của người dùng | QT-14, AC-3.3 |
 | `INVALID_THRESHOLD` | 400 | Ngưỡng tối thiểu < 0 | AC-8.2 |
