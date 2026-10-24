@@ -17,6 +17,7 @@
 - **Ảnh hưởng:**
   - **Bảng thuật ngữ (Glossary - Mục 1.1.4):** Chuẩn hóa tên bảng CSDL là `part_transactions`, bản ghi giao dịch là `part_transaction`; quy định giá trị kỹ thuật loại giao dịch là `IMPORT` và `EXPORT`; chuẩn hóa vòng đời 6 trạng thái phiếu bảo hành: `TIEP_NHAN` -> `DA_PHAN_CONG` -> `DANG_XU_LY` -> `CHO_LINH_KIEN` -> `HOAN_TAT` -> `DA_DONG` (loại bỏ hoàn toàn từ đơn lẻ `'Mới'`).
   - **Từ điển dữ liệu & DDL (Mục 4.2.5, 4.3 trong báo cáo; `db/schema.sql`):** Quy định kiểu `transaction_type VARCHAR(10)`, bổ sung ràng buộc kiểm tra toàn vẹn `CONSTRAINT chk_tx_type CHECK (transaction_type IN ('IMPORT', 'EXPORT'))`, ràng buộc trạng thái phiếu `CONSTRAINT chk_tickets_status CHECK (status IN ('TIEP_NHAN', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_DONG'))`, và quy định `ticket_id` bắt buộc khi `EXPORT`, nhận `NULL` khi `IMPORT`.
+  - **Hợp đồng API (`docs/api-contract.md`):** Chuẩn hóa `transactionType` thành `"IMPORT"` và `"EXPORT"`; bổ sung Mục 1.6 quy ước ánh xạ tường minh giữa DTO API và CSDL MySQL 8.x; đồng bộ 6 trạng thái vòng đời phiếu bảo hành (`TIEP_NHAN`, `DA_PHAN_CONG`, `DANG_XU_LY`, `CHO_LINH_KIEN`, `HOAN_TAT`, `DA_DONG`) theo quy tắc QT-06.
   - **Wireframe giao diện (Mục 5.1, 5.2, 5.3):** Bổ sung *Ghi chú kỹ thuật ánh xạ giao diện - CSDL* cho cả M1, M2, M3 phân định rõ nhãn tiếng Việt hiển thị trên UI và giá trị lưu trữ kỹ thuật tương ứng trong CSDL và API.
 
 ---
@@ -47,5 +48,5 @@
 - **Quyết định:** SỬA.
 - **Lý do:** Đối với Track SE, tài liệu `docs/api-contract.md` là sản phẩm kỹ thuật bắt buộc để định nghĩa hợp đồng giao tiếp giữa frontend prototype và backend service, chuẩn bị cho việc viết mã nguồn ở Sprint 1 & 2. Bản kê khai AI phải tuân thủ nghiêm ngặt Quy định về Liêm chính học thuật của Trường Đại học Văn Lang với đầy đủ cam kết trách nhiệm cá nhân của sinh viên.
 - **Ảnh hưởng:**
-  - **Khôi phục `docs/api-contract.md`:** Khôi phục trọn vẹn 729 dòng đặc tả RESTful API chi tiết (bao quát từ UC-01 đến UC-07, 9 endpoint, request/response DTO, mã lỗi nghiệp vụ, JWT auth).
+  - **Khôi phục và hoàn thiện `docs/api-contract.md`:** Khôi phục trọn vẹn đặc tả RESTful API chi tiết (bao quát từ UC-01 đến UC-07, 9 endpoint, request/response DTO, mã lỗi nghiệp vụ, JWT auth); bổ sung Mục 1.6 quy ước ánh xạ tường minh giữa DTO API và CSDL MySQL 8.x; đồng bộ 100% các hằng số enum (`IMPORT`/`EXPORT`, 6 trạng thái phiếu bảo hành theo QT-06) và chỉ số hiệu năng NFR-01.
   - **Bổ sung Mục 2 trong Phụ lục AI (báo cáo và `docs/ai-declaration.md`):** Đưa vào đầy đủ khẩu lệnh cam kết nguyên văn: `> "Tôi xác nhận đã đọc, hiểu và chịu trách nhiệm về toàn bộ nội dung nộp."`, cùng thông tin sinh viên Phạm Trí Trọng, MSSV 2374802010525, Track SE và ngày ký cam kết 15/10/2026.
