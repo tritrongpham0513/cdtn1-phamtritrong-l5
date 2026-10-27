@@ -28,11 +28,12 @@ import java.util.List;
 public class TransactionController {
 
     private final PartTransactionService transactionService;
+    private final com.mekongmobile.inventory.service.AuthTokenService authTokenService;
 
     /**
      * 1. Ghi nhận nhập kho linh kiện từ nhà cung cấp / điều chuyển (UC-02, US-02)
      * Endpoint: POST http://localhost:8080/api/v1/transactions/import
-     * Headers: X-Center-Id: 1, Content-Type: application/json
+     * Headers: Authorization: Bearer <token>, X-Center-Id: 1, Content-Type: application/json
      * Body mẫu:
      * {
      *   "partCode": "PIN-IP-15",
@@ -43,9 +44,11 @@ public class TransactionController {
      */
     @PostMapping("/transactions/import")
     public ResponseEntity<ApiResponseDTO<TransactionResponseDTO>> importPart(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @Valid @RequestBody ImportTransactionRequestDTO request
     ) {
+        authTokenService.requireRole(authHeader, "MANAGER", "Nhập kho linh kiện mới");
         TransactionResponseDTO response = transactionService.importPart(centerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseDTO.ok(response));
     }
@@ -53,7 +56,7 @@ public class TransactionController {
     /**
      * 2. Xuất linh kiện cho phiếu sửa chữa bảo hành (UC-03, UC-04, US-03, US-04)
      * Endpoint: POST http://localhost:8080/api/v1/transactions/export
-     * Headers: X-Center-Id: 1, Content-Type: application/json
+     * Headers: Authorization: Bearer <token>, X-Center-Id: 1, Content-Type: application/json
      * Body mẫu:
      * {
      *   "ticketCode": "BH-CT-2026-0001",
@@ -65,9 +68,11 @@ public class TransactionController {
      */
     @PostMapping("/transactions/export")
     public ResponseEntity<ApiResponseDTO<TransactionResponseDTO>> exportPart(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @Valid @RequestBody ExportTransactionRequestDTO request
     ) {
+        authTokenService.requireRole(authHeader, "TECHNICIAN", "Xuất kho linh kiện cho phiếu sửa chữa");
         TransactionResponseDTO response = transactionService.exportPart(centerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseDTO.ok(response));
     }

@@ -2,6 +2,7 @@ package com.mekongmobile.inventory.config;
 
 import com.mekongmobile.inventory.dto.response.ApiResponseDTO;
 import com.mekongmobile.inventory.exception.BusinessRuleException;
+import com.mekongmobile.inventory.exception.ForbiddenException;
 import com.mekongmobile.inventory.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDTO<Void>> handleBusinessRule(BusinessRuleException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiResponseDTO.fail("BUSINESS_RULE_VIOLATION", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleForbidden(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponseDTO.fail("FORBIDDEN", ex.getMessage(), null));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
