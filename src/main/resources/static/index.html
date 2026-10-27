@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mekong Mobile Smart CRM · Kho linh kiện thay thế (L5)</title>
+  <meta name="description" content="Hệ thống quản lý kho linh kiện thay thế và kiểm soát xuất kho theo phiếu bảo hành - Mekong Mobile Smart CRM.">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- 1. THANH ĐIỀU HƯỚNG BÊN TRÁI (SIDEBAR) -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">M</div>
+        <div class="brand-text">
+          <h2>Mekong Mobile</h2>
+          <span>Smart CRM · Kho L5</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li>
+          <a class="nav-item active" data-screen="screen-stock" id="nav-stock">
+            <span class="nav-icon">📊</span>
+            <span>Tồn kho & Cảnh báo (M1)</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-screen="screen-export" id="nav-export">
+            <span class="nav-icon">📤</span>
+            <span>Phiếu xuất kho (M2)</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-screen="screen-transactions" id="nav-transactions">
+            <span class="nav-icon">📑</span>
+            <span>Lịch sử giao dịch (M3)</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="student-card">
+          <div class="avatar">PT</div>
+          <div class="student-info">
+            <h4>Phạm Trí Trọng</h4>
+            <p>MSSV: 2374802010525 · SE</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. KHU VỰC NỘI DUNG CHÍNH (MAIN CONTENT) -->
+    <main class="main-wrapper">
+      
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="page-title">Bảng Điều Khiển Tồn Kho & Cảnh Báo (M1)</h1>
+        </div>
+
+        <div class="topbar-right">
+          <div class="center-selector">
+            <label for="select-center">Chi nhánh:</label>
+            <select id="select-center">
+              <option value="1" selected>TT01 — TTBH Quận 10 (TP.HCM)</option>
+              <option value="2">TT02 — TTBH Quận Tân Bình (TP.HCM)</option>
+              <option value="3">TT03 — TTBH TP. Thủ Đức (TP.HCM)</option>
+              <option value="4">TT04 — TTBH Ninh Kiều (Cần Thơ)</option>
+              <option value="5">TT05 — TTBH Cái Răng (Cần Thơ)</option>
+              <option value="6">TT06 — TTBH Cầu Giấy (Hà Nội)</option>
+            </select>
+          </div>
+
+          <div class="user-auth-badge" id="topbar-user-badge">
+            <div class="user-avatar" id="topbar-avatar">PT</div>
+            <div class="user-details">
+              <span class="user-name" id="topbar-username">Chưa đăng nhập</span>
+              <span class="user-role-badge" id="topbar-role">Guest</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-login-trigger" style="margin-left: 8px;">🔑 Đăng nhập</button>
+            <button class="btn btn-secondary btn-sm" id="btn-logout" style="display: none; margin-left: 8px;" title="Đăng xuất khỏi hệ thống">🚪 Đăng xuất</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Nội dung các màn hình (Content Area) -->
+      <div class="content-area">
+
+        <!-- ===================================================================
+             MÀN HÌNH 1 (M1) — TRA CỨU TỒN KHO & CẢNH BÁO TỒN THẤP
+             =================================================================== -->
+        <section class="screen-view active" id="screen-stock">
+          
+          <!-- Thẻ chỉ số tổng quan (KPIs) -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon blue">📦</div>
+              <div class="metric-data">
+                <h3 id="metric-total-parts">0</h3>
+                <p>Tổng linh kiện danh mục</p>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon green">✓</div>
+              <div class="metric-data">
+                <h3 id="metric-in-stock">0</h3>
+                <p>Linh kiện đủ hàng</p>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon yellow">⚠</div>
+              <div class="metric-data">
+                <h3 id="metric-low-stock">0</h3>
+                <p>Cảnh báo tồn thấp</p>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon red">✕</div>
+              <div class="metric-data">
+                <h3 id="metric-out-stock">0</h3>
+                <p>Hết hàng khả dụng</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thanh điều khiển: Tìm kiếm, Lọc tồn thấp, Nút thao tác -->
+          <div class="control-bar">
+            <div class="control-left">
+              <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="stock-search-input" placeholder="Tìm theo mã hoặc tên linh kiện (vd: MH-SS, Pin iPhone)...">
+              </div>
+
+              <label class="filter-toggle">
+                <input type="checkbox" id="checkbox-low-stock">
+                <span>Chỉ xem cảnh báo tồn thấp (&lt; min)</span>
+              </label>
+            </div>
+
+            <div class="control-right">
+              <button class="btn btn-secondary" id="btn-refresh-stock">
+                🔄 Làm mới
+              </button>
+              <button class="btn btn-secondary" id="btn-create-part">
+                ➕ Thêm linh kiện
+              </button>
+              <button class="btn btn-primary" id="btn-quick-import">
+                📥 Nhập kho mới
+              </button>
+            </div>
+          </div>
+
+          <!-- Bảng dữ liệu tồn kho (Hỗ trợ 3 trạng thái: Loading, Empty, Error) -->
+          <div class="table-container">
+            <div id="stock-table-content">
+              <!-- Nội dung bảng hoặc trạng thái sẽ được render động bởi app.js -->
+            </div>
+
+            <!-- Thanh phân trang -->
+            <div class="pagination" id="stock-pagination" style="display: none;">
+              <span id="stock-page-info">Hiển thị 0 - 0 trên tổng số 0</span>
+              <div class="pagination-controls">
+                <button class="btn btn-secondary btn-sm" id="stock-btn-prev">‹ Trang trước</button>
+                <button class="btn btn-secondary btn-sm" id="stock-btn-next">Trang sau ›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             MÀN HÌNH 2 (M2) — PHIẾU XUẤT KHO CHO PHIẾU BẢO HÀNH
+             =================================================================== -->
+        <section class="screen-view" id="screen-export">
+          <div class="form-card">
+            <div class="form-header">
+              <h2>Phiếu Xuất Linh Kiện Cho Phiếu Bảo Hành (M2)</h2>
+            </div>
+
+            <!-- Khối form thông báo phân quyền chuyên biệt cho Quản lý kho -->
+            <div id="export-manager-block" style="display:none; text-align: center; padding: 40px 24px; background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-color); border-radius: 12px; margin-top: 10px;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+              <h3 style="font-size: 18px; margin-bottom: 10px; color: var(--text-main);">Thông Báo Phân Quyền: Quản Lý Kho</h3>
+              <p style="color: var(--text-dim); font-size: 14px; max-width: 520px; margin: 0 auto 24px; line-height: 1.6;">
+                Tài khoản của bạn đang có vai trò <strong style="color: var(--cyan)">Quản lý kho</strong>. Theo quy trình kiểm soát nội bộ, chỉ có <strong style="color: var(--primary)">Kỹ thuật viên</strong> trực tiếp nhận máy mới có quyền lập phiếu xuất kho linh kiện sửa chữa.
+              </p>
+              <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary" id="btn-switch-to-ktv">
+                  👨‍🔧 Chuyển sang tài khoản Kỹ thuật viên
+                </button>
+                <button type="button" class="btn btn-secondary" id="btn-back-to-stock">
+                  📊 Quay về Bảng tồn kho (M1)
+                </button>
+              </div>
+            </div>
+
+            <form id="form-export-part">
+              <div class="form-grid">
+                
+                <!-- Mã phiếu bảo hành -->
+                <div class="form-group">
+                  <label for="export-ticket-id">Mã phiếu bảo hành *</label>
+                  <input type="text" id="export-ticket-id" class="form-control" placeholder="Ví dụ: BH-000002/2025 hoặc BH-000022/2025" required>
+                  <small style="color: var(--text-dim); font-size: 11px;">Chỉ cho phép xuất khi phiếu đang ở trạng thái 'DANG_XU_LY' hoặc 'CHO_LINH_KIEN'</small>
+                </div>
+
+                <!-- Linh kiện cần xuất -->
+                <div class="form-group">
+                  <label for="export-part-id">Linh kiện cần xuất *</label>
+                  <select id="export-part-id" class="form-control" required>
+                    <option value="">-- Đang tải danh sách linh kiện... --</option>
+                  </select>
+                  <div class="live-stock-preview" id="export-stock-preview">
+                    Chọn linh kiện để kiểm tra số lượng tồn khả dụng.
+                  </div>
+                </div>
+
+                <!-- Số lượng xuất -->
+                <div class="form-group">
+                  <label for="export-quantity">Số lượng xuất *</label>
+                  <input type="number" id="export-quantity" class="form-control" min="1" value="1" required>
+                  <div id="export-qty-warning" style="font-size: 11px; margin-top: 4px; font-weight: 600;"></div>
+                </div>
+
+                <!-- Kỹ thuật viên thực hiện -->
+                <div class="form-group">
+                  <label for="export-performed-by">Kỹ thuật viên thực hiện *</label>
+                  <input type="text" id="export-performed-by" class="form-control" value="KTV - Phạm Trí Trọng" required>
+                </div>
+
+                <!-- Ghi chú bổ sung -->
+                <div class="form-group full">
+                  <label for="export-note">Ghi chú xuất kho</label>
+                  <input type="text" id="export-note" class="form-control" placeholder="Nhập lý do thay thế hoặc tình trạng máy khách...">
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Đặt lại</button>
+                <button type="submit" class="btn btn-primary" id="btn-submit-export">
+                  ✓ Xác nhận xuất kho
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             MÀN HÌNH 3 (M3) — SỔ CÁI LỊCH SỬ GIAO DỊCH KHO (APPEND-ONLY LOG)
+             =================================================================== -->
+        <section class="screen-view" id="screen-transactions">
+          
+          <!-- Bộ lọc sổ cái giao dịch -->
+          <div class="control-bar">
+            <div class="control-left">
+              <div style="min-width: 150px;">
+                <select id="tx-filter-type" class="form-control">
+                  <option value="">-- Tất cả loại giao dịch --</option>
+                  <option value="IMPORT">Nhập kho (IMPORT)</option>
+                  <option value="EXPORT">Xuất kho (EXPORT)</option>
+                </select>
+              </div>
+
+              <div class="search-box" style="max-width: 250px;">
+                <input type="text" id="tx-filter-part" class="form-control" placeholder="Mã linh kiện (vd: MH-SS-01)...">
+              </div>
+
+              <button class="btn btn-secondary btn-sm" id="tx-btn-apply-filter">
+                🔍 Lọc lịch sử
+              </button>
+            </div>
+
+            <div class="control-right">
+              <span class="badge badge-purple" style="font-size: 12px; padding: 6px 12px;">
+                🛡️ Sổ cái bất biến (Append-Only Log)
+              </span>
+            </div>
+          </div>
+
+          <!-- Bảng lịch sử giao dịch -->
+          <div class="table-container">
+            <div id="tx-table-content">
+              <!-- Nội dung bảng giao dịch sẽ được render động bởi app.js -->
+            </div>
+
+            <!-- Phân trang lịch sử -->
+            <div class="pagination" id="tx-pagination" style="display: none;">
+              <span id="tx-page-info">Hiển thị 0 - 0</span>
+              <div class="pagination-controls">
+                <button class="btn btn-secondary btn-sm" id="tx-btn-prev">‹ Trang trước</button>
+                <button class="btn btn-secondary btn-sm" id="tx-btn-next">Trang sau ›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ===================================================================
+       POPUP MODAL: ĐIỀU CHỈNH NGƯỠNG TỒN TỐI THIỂU (US-08)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-threshold">
+    <div class="modal-box">
+      <div class="modal-title">⚙️ Điều Chỉnh Ngưỡng Cảnh Báo Tồn Thấp</div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Linh kiện: <strong id="modal-threshold-part-name" style="color: var(--primary)"></strong>
+      </p>
+
+      <form id="form-threshold">
+        <input type="hidden" id="modal-threshold-part-id">
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="modal-threshold-val">Ngưỡng tồn cảnh báo tối thiểu mới *</label>
+          <input type="number" id="modal-threshold-val" class="form-control" min="0" required>
+          <small style="color: var(--text-dim); font-size: 11px;">Khi số lượng tồn &lt; ngưỡng này, hệ thống sẽ kích hoạt cảnh báo tồn thấp.</small>
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-threshold')">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary">Lưu ngưỡng mới</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       POPUP MODAL: NHẬP KHO NHANH (US-02, UC-02)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-import">
+    <div class="modal-box">
+      <div class="modal-title">➕ Ghi Nhận Nhập Kho Linh Kiện (M1)</div>
+      
+      <form id="form-import-quick">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="modal-import-part-id">Mã linh kiện (part_code) *</label>
+          <input type="text" id="modal-import-part-id" class="form-control" placeholder="Ví dụ: MH-SS-01 hoặc PIN-IP15" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="modal-import-quantity">Số lượng nhập *</label>
+          <input type="number" id="modal-import-quantity" class="form-control" min="1" value="10" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="modal-import-performed-by">Người thực hiện (Quản lý kho) *</label>
+          <input type="text" id="modal-import-performed-by" class="form-control" value="Quản lý kho - Nguyễn Trí Hải" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="modal-import-note">Ghi chú</label>
+          <input type="text" id="modal-import-note" class="form-control" placeholder="Nhập định kỳ, hàng mới về...">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-import')">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary">Xác nhận nhập kho</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       POPUP MODAL: THÊM MỚI LINH KIỆN (TIÊU CHÍ S1 - CRUD CREATE)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-create-part">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-title">✨ Thêm Mới Linh Kiện Chuẩn Hóa (M1)</div>
+      <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+        Đăng ký linh kiện mới vào danh mục và khởi tạo bản ghi kho cho trung tâm.
+      </p>
+
+      <form id="form-create-part">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label for="create-part-code">Mã linh kiện *</label>
+            <input type="text" id="create-part-code" class="form-control" placeholder="VD: CAM-IP-15" required style="text-transform: uppercase;">
+          </div>
+          <div class="form-group">
+            <label for="create-part-category">Danh mục *</label>
+            <select id="create-part-category" class="form-control" required>
+              <option value="MAN_HINH">Màn hình</option>
+              <option value="PIN">Pin</option>
+              <option value="CAMERA">Camera</option>
+              <option value="MAINBOARD">Mainboard</option>
+              <option value="VO_MAY">Vỏ máy / Lưng</option>
+              <option value="LINH_KIEN_KHAC">Linh kiện khác</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label for="create-part-name">Tên linh kiện *</label>
+          <input type="text" id="create-part-name" class="form-control" placeholder="VD: Camera góc rộng iPhone 15 Pro Max" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label for="create-part-unit">Đơn vị tính *</label>
+            <input type="text" id="create-part-unit" class="form-control" value="Cái" required>
+          </div>
+          <div class="form-group">
+            <label for="create-part-price">Đơn giá (VNĐ) *</label>
+            <input type="number" id="create-part-price" class="form-control" min="0" step="1000" placeholder="VD: 850000" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; padding: 12px; background: rgba(0,0,0,0.02); border: 1px dashed var(--border-color); border-radius: 8px;">
+          <div class="form-group">
+            <label for="create-part-init-qty">Số lượng nhập ban đầu</label>
+            <input type="number" id="create-part-init-qty" class="form-control" min="0" value="10">
+          </div>
+          <div class="form-group">
+            <label for="create-part-min-thresh">Ngưỡng cảnh báo tồn</label>
+            <input type="number" id="create-part-min-thresh" class="form-control" min="0" value="5">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-create-part')">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-create-part">✓ Lưu linh kiện</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       POPUP MODAL: CHỈNH SỬA THÔNG TIN LINH KIỆN (TIÊU CHÍ S1 - CRUD UPDATE)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-edit-part">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-title">✏️ Chỉnh Sửa Thông Tin Linh Kiện</div>
+      <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+        Mã linh kiện: <strong id="edit-part-code-display" style="color: var(--primary); font-family: monospace;"></strong>
+      </p>
+
+      <form id="form-edit-part">
+        <input type="hidden" id="edit-part-code">
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label for="edit-part-name">Tên linh kiện *</label>
+          <input type="text" id="edit-part-name" class="form-control" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label for="edit-part-category">Danh mục *</label>
+            <select id="edit-part-category" class="form-control" required>
+              <option value="MAN_HINH">Màn hình</option>
+              <option value="PIN">Pin</option>
+              <option value="CAMERA">Camera</option>
+              <option value="MAINBOARD">Mainboard</option>
+              <option value="VO_MAY">Vỏ máy / Lưng</option>
+              <option value="LINH_KIEN_KHAC">Linh kiện khác</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-part-unit">Đơn vị tính *</label>
+            <input type="text" id="edit-part-unit" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="edit-part-price">Đơn giá (VNĐ) *</label>
+          <input type="number" id="edit-part-price" class="form-control" min="0" step="1000" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-part')">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-edit-part">✓ Cập nhật</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       POPUP MODAL: ĐĂNG NHẬP CƠ BẢN (THÀNH PHẦN 3 - TRACK SE)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-login">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-title" style="text-align: center; margin-bottom: 8px;">🔐 Đăng Nhập Mekong Smart CRM</div>
+      <p style="text-align: center; color: var(--text-dim); font-size: 13px; margin-bottom: 20px;">
+        Vui lòng đăng nhập để tiếp tục làm việc
+      </p>
+
+      <!-- Tài khoản mẫu 1-click để Giảng viên test nhanh -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px dashed var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 18px;">
+        <span style="font-size: 12px; font-weight: 600; color: var(--text-dim); display: block; margin-bottom: 8px;">⚡ Chọn nhanh tài khoản mẫu:</span>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-quick-login-ktv" style="flex: 1; font-size: 12px;">
+            👨‍🔧 KTV (ktv_trong)
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-quick-login-manager" style="flex: 1; font-size: 12px;">
+            👔 Quản lý (quanly_kho)
+          </button>
+        </div>
+      </div>
+      
+      <form id="form-login">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="login-username">Tên đăng nhập (Username) *</label>
+          <input type="text" id="login-username" class="form-control" placeholder="ktv_trong" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="login-password">Mật khẩu (Password) *</label>
+          <input type="password" id="login-password" class="form-control" placeholder="123456" required>
+        </div>
+
+        <div id="login-error-msg" style="display: none; color: var(--danger); font-size: 12px; margin-bottom: 14px; padding: 8px; background: rgba(239, 68, 68, 0.1); border-radius: 6px;"></div>
+
+        <div class="form-actions" style="margin-top: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-login')">Hủy bỏ</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-login" style="flex: 1; justify-content: center;">
+            ✓ Xác nhận Đăng nhập
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
