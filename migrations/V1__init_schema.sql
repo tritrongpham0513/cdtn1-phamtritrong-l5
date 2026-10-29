@@ -83,8 +83,8 @@ CREATE TABLE IF NOT EXISTS part_transactions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 6. CHỈ MỤC TỐI ƯU HIỆU NĂNG NFR-01 (Thời gian phản hồi <= 500ms)
-CREATE INDEX IF NOT EXISTS idx_stock_center_part ON part_stock(center_id, part_id);
-CREATE INDEX IF NOT EXISTS idx_stock_low ON part_stock(center_id, quantity, min_threshold);
-CREATE INDEX IF NOT EXISTS idx_tx_search ON part_transactions(center_id, transaction_type, created_at);
-CREATE INDEX IF NOT EXISTS idx_tx_ticket ON part_transactions(ticket_id);
-CREATE INDEX IF NOT EXISTS idx_tickets_center_status ON tickets(center_id, status);
+CREATE INDEX idx_stock_center_part ON part_stock(center_id, part_id);
+CREATE INDEX idx_stock_low ON part_stock(center_id, quantity, min_threshold);
+CREATE INDEX idx_tx_search ON part_transactions(center_id, transaction_type, created_at);
+CREATE INDEX idx_tx_ticket ON part_transactions(ticket_id);
+CREATE INDEX idx_tickets_center_status ON tickets(center_id, status);

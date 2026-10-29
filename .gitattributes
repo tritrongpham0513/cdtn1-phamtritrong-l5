@@ -1,3 +1,4 @@
 # Luôn giữ định dạng Unix LF cho mvnw và các shell script trên mọi hệ điều hành
 mvnw text eol=lf
 *.sh text eol=lf
+
