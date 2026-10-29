@@ -348,6 +348,14 @@ body {
   margin-top: 2px;
 }
 
+.metric-subtext {
+  display: block;
+  font-size: 11px;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
 /* Control Bar (Search, Filters, Action Buttons) */
 .control-bar {
   background: var(--bg-card);

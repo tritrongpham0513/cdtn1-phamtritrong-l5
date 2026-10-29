@@ -402,8 +402,10 @@ function updateStockMetrics(currentItems, totalCount) {
     const lowStockEl = document.getElementById('metric-low-stock');
     const outStockEl = document.getElementById('metric-out-stock');
     const inStockEl = document.getElementById('metric-in-stock');
+    const rateEl = document.getElementById('metric-in-stock-rate');
 
-    if (totalEl) totalEl.textContent = totalCount || currentItems.length || 0;
+    const total = totalCount || currentItems.length || 0;
+    if (totalEl) totalEl.textContent = total;
 
     let lowCount = 0;
     let outCount = 0;
@@ -412,9 +414,10 @@ function updateStockMetrics(currentItems, totalCount) {
         else if (item.isLowStock) lowCount++;
     });
 
+    const inStockCount = Math.max(0, currentItems.length - lowCount - outCount);
     if (lowStockEl) lowStockEl.textContent = lowCount;
     if (outStockEl) outStockEl.textContent = outCount;
-    if (inStockEl) inStockEl.textContent = (currentItems.length - lowCount - outCount);
+    if (inStockEl) inStockEl.textContent = inStockCount;
 }
 
 function renderStockTable(container, items) {
