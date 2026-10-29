@@ -173,7 +173,9 @@ Hệ thống tự động thực hiện các tác vụ:
 1. Kéo image MySQL 8.0, cấu hình tài khoản và đợi kiểm tra sức khỏe `mysqladmin ping` thành công.
 2. Build image ứng dụng Spring Boot từ Dockerfile đa tầng (chạy user bảo mật `mekonguser`).
 3. Khởi chạy Backend, thực thi Flyway migration tạo đủ 5 bảng và nạp tự động dữ liệu hạt giống từ `seeds/`.
-4. Mở cổng `8080` sẵn sàng phục vụ tại **`http://localhost:8080/`**.
+4. Mở cổng `8888` sẵn sàng phục vụ tại **`http://localhost:8888/`** *(cổng host mặc định `8888` giúp tránh xung đột với các dịch vụ khác hoặc cổng 8080 bị khóa trên Windows; nếu muốn đổi về cổng `8080`, chỉ cần chạy `APP_PORT=8080 docker compose up -d`)*.
+   - **Giao diện Web Prototype (Docker):** **`http://localhost:8888/`**
+   - **Kiểm tra trạng thái dịch vụ (Health Check):** **`http://localhost:8888/api/health`**
 
 - **Dừng toàn bộ hệ thống khi hoàn tất nghiệm thu:**
   ```bash
