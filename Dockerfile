@@ -7,10 +7,13 @@
 FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
 
+# Cài đặt curl và chuyển đổi line endings cho Windows
+RUN apk add --no-cache curl
+
 # Copy Maven Wrapper và cấu hình pom.xml
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN chmod +x mvnw
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 
 # Tải trước các phụ thuộc (cache layer)
 RUN ./mvnw dependency:go-offline -B || true

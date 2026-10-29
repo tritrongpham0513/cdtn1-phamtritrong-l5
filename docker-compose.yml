@@ -1,5 +1,3 @@
-version: '3.8'
-
 # =============================================================================
 # Docker Compose: Khởi động hệ thống bằng ĐÚNG MỘT LỆNH duy nhất
 # Đáp ứng tiêu chí Thành phần 4 mức đánh giá cao (Bonus point Rubric Tiêu chí 2)
