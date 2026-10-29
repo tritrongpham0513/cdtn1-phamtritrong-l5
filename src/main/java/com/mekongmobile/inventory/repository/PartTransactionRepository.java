@@ -31,7 +31,7 @@ public interface PartTransactionRepository extends JpaRepository<PartTransaction
     /**
      * Lọc lịch sử giao dịch linh kiện theo nhiều tiêu chí (US-06)
      */
-    @Query("SELECT pt FROM PartTransaction pt " +
+    @Query(value = "SELECT pt FROM PartTransaction pt " +
            "JOIN FETCH pt.part p " +
            "LEFT JOIN FETCH pt.ticket t " +
            "JOIN FETCH pt.serviceCenter sc " +
@@ -40,7 +40,13 @@ public interface PartTransactionRepository extends JpaRepository<PartTransaction
            "AND (:type IS NULL OR pt.transactionType = :type) " +
            "AND (:fromDate IS NULL OR pt.createdAt >= :fromDate) " +
            "AND (:toDate IS NULL OR pt.createdAt <= :toDate) " +
-           "ORDER BY pt.createdAt DESC")
+           "ORDER BY pt.createdAt DESC",
+           countQuery = "SELECT count(pt) FROM PartTransaction pt " +
+           "WHERE pt.serviceCenter.centerId = :centerId " +
+           "AND (:partCode IS NULL OR pt.part.partCode = :partCode) " +
+           "AND (:type IS NULL OR pt.transactionType = :type) " +
+           "AND (:fromDate IS NULL OR pt.createdAt >= :fromDate) " +
+           "AND (:toDate IS NULL OR pt.createdAt <= :toDate)")
     Page<PartTransaction> findTransactionHistory(
             @Param("centerId") Long centerId,
             @Param("partCode") String partCode,

@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -364,10 +365,22 @@ public class DataInitializer implements CommandLineRunner {
                 String[] cols = line.split(",");
                 if (cols.length >= 4) {
                     try {
-                        long centerId = Long.parseLong(cols[1].trim());
-                        long partId = Long.parseLong(cols[2].trim());
-                        int qty = Integer.parseInt(cols[3].trim());
-                        int minThresh = cols.length >= 5 ? Integer.parseInt(cols[4].trim()) : 5;
+                        long centerId;
+                        long partId;
+                        int qty;
+                        int minThresh;
+
+                        if (cols.length == 4) {
+                            centerId = Long.parseLong(cols[0].trim());
+                            partId = Long.parseLong(cols[1].trim());
+                            qty = Integer.parseInt(cols[2].trim());
+                            minThresh = Integer.parseInt(cols[3].trim());
+                        } else {
+                            centerId = Long.parseLong(cols[1].trim());
+                            partId = Long.parseLong(cols[2].trim());
+                            qty = Integer.parseInt(cols[3].trim());
+                            minThresh = Integer.parseInt(cols[4].trim());
+                        }
 
                         String pairKey = centerId + ":" + partId;
                         if (existingPairs.contains(pairKey)) {
@@ -436,21 +449,53 @@ public class DataInitializer implements CommandLineRunner {
                     continue;
                 }
 
-                String[] cols = line.split(",");
-                if (cols.length >= 8) {
+                String[] cols = line.split(",", -1);
+                if (cols.length >= 6) {
                     try {
-                        String txCode = cols[1].trim();
+                        String txCode;
+                        long centerId;
+                        long partId;
+                        String ticketCode = "";
+                        String txType;
+                        int qty;
+                        String performedBy;
+                        String note;
+                        LocalDateTime createdAt = LocalDateTime.now();
+
+                        if (cols.length >= 8) {
+                            txCode = cols[1].trim();
+                            centerId = Long.parseLong(cols[2].trim());
+                            partId = Long.parseLong(cols[3].trim());
+                            ticketCode = cols[4].trim();
+                            txType = cols[5].trim().toUpperCase();
+                            qty = Integer.parseInt(cols[6].trim());
+                            performedBy = cols[7].trim();
+                            note = cols.length >= 9 ? cols[8].trim() : "Giao dịch kho mẫu";
+                        } else {
+                            // Format 7 cột chuẩn dataset seeds/part_transactions.csv
+                            long rawId = Long.parseLong(cols[0].trim());
+                            txCode = String.format("TX-%06d", rawId);
+                            centerId = Long.parseLong(cols[1].trim());
+                            partId = Long.parseLong(cols[2].trim());
+                            txType = cols[3].trim().toUpperCase();
+                            qty = Integer.parseInt(cols[4].trim());
+                            String dateStr = cols[5].trim();
+                            if (!dateStr.isEmpty()) {
+                                try {
+                                    createdAt = LocalDate.parse(dateStr).atTime(8 + (int) (rawId % 10), (int) (rawId % 60));
+                                } catch (Exception ignored) {
+                                }
+                            }
+                            if (cols.length >= 7) {
+                                ticketCode = cols[6].trim();
+                            }
+                            performedBy = "KTV - Phạm Trí Trọng";
+                            note = "XUAT".equalsIgnoreCase(txType) ? "Xuất linh kiện bảo hành" : "Nhập kho linh kiện";
+                        }
+
                         if (existingTxCodes.contains(txCode)) {
                             continue;
                         }
-
-                        long centerId = Long.parseLong(cols[2].trim());
-                        long partId = Long.parseLong(cols[3].trim());
-                        String ticketCode = cols[4].trim();
-                        String txType = cols[5].trim().toUpperCase();
-                        int qty = Integer.parseInt(cols[6].trim());
-                        String performedBy = cols[7].trim();
-                        String note = cols.length >= 9 ? cols[8].trim() : "Giao dịch kho mẫu";
 
                         // Chuẩn hóa loại giao dịch theo QT-L5-01 & QT-L5-02
                         if ("NHAP".equalsIgnoreCase(txType) || "IMPORT".equalsIgnoreCase(txType)) {
@@ -469,7 +514,7 @@ public class DataInitializer implements CommandLineRunner {
 
                         ServiceCenter center = centerMap.get(centerId);
                         Part part = partMap.get(partId);
-                        Ticket ticket = ticketMap.get(ticketCode);
+                        Ticket ticket = !ticketCode.isEmpty() ? ticketMap.get(ticketCode) : null;
 
                         // Giao dịch EXPORT phải gắn với phiếu bảo hành hợp lệ theo QT-06
                         if ("EXPORT".equals(txType) && ticket == null) {
@@ -489,7 +534,7 @@ public class DataInitializer implements CommandLineRunner {
                                     .quantity(qty)
                                     .performedBy(performedBy.isEmpty() ? "KTV Mekong Mobile" : performedBy)
                                     .note(note)
-                                    .createdAt(LocalDateTime.now())
+                                    .createdAt(createdAt)
                                     .build();
 
                             toSave.add(tx);

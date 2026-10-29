@@ -191,10 +191,12 @@ public class PartTransactionServiceImpl implements PartTransactionService {
     ) {
         LocalDateTime start = fromDate != null ? fromDate.atStartOfDay() : null;
         LocalDateTime end = toDate != null ? toDate.atTime(23, 59, 59) : null;
+        String cleanPart = (partCode != null && !partCode.trim().isEmpty()) ? partCode.trim() : null;
+        String cleanType = (type != null && !type.trim().isEmpty()) ? type.trim().toUpperCase() : null;
 
         Pageable pageable = PageRequest.of(page - 1, limit);
         Page<PartTransaction> txPage = partTransactionRepository.findTransactionHistory(
-                centerId, partCode, type, start, end, pageable
+                centerId, cleanPart, cleanType, start, end, pageable
         );
 
         List<TransactionResponseDTO> items = txPage.getContent().stream()
