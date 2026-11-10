@@ -27,7 +27,7 @@ Hệ thống ứng dụng kỹ thuật **Khóa bi quan (`SELECT ... FOR UPDATE` 
 - **Backend:** Java 17 LTS, Spring Boot 3.2.5, Spring Data JPA, Hibernate ORM, Flyway Migration. Kiến trúc phân tầng sạch (Clean Architecture) tách biệt nghiêm ngặt: `controller/` (REST API & DTO mapping) ↔ `service/` (100% nghiệp vụ thuần túy, hoàn toàn không phụ thuộc HTTP) ↔ `repository/` (Spring Data JPA truy xuất CSDL, hỗ trợ Khóa bi quan `PESSIMISTIC_WRITE`).
 - **Cơ sở dữ liệu:** MySQL 8.0 (triển khai production/Docker) kết hợp H2 In-Memory Database (môi trường kiểm thử và chạy local độc lập). Lược đồ 5 bảng chuẩn 3NF: `service_centers`, `parts`, `tickets` (Read-only từ L2/L4), `part_stock`, `part_transactions`.
 - **Kiểm thử tự động:** JUnit 5, Mockito, MockMvc, H2 In-Memory. 32 kịch bản kiểm thử tự động (27 Unit + 2 Integration + 3 API) bao phủ trọn vẹn mô hình Kim tự tháp: Unit test nghiệp vụ (Happy path, Boundary, Negative data, RBAC và Chủ sở hữu dữ liệu S2), Integration test tính tái lập Seeder (C8) và export/import end-to-end trên H2, cùng REST API slice test (HTTP 201, 422, 403).
-- **Đóng gói & Triển khai:** Docker Multi-stage build (JRE Eclipse Temurin 17 non-root user `mekonguser`), Docker Compose v2 ([`docker-compose.yml`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/docker-compose.yml) khởi chạy trọn gói Backend + Database bằng đúng 1 lệnh).
+- **Đóng gói & Triển khai:** Docker Multi-stage build (JRE Eclipse Temurin 17 non-root user `mekonguser`), Docker Compose v2 ([`docker-compose.yml`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/docker-compose.yml) khởi chạy trọn gói Backend + Database bằng 2 lệnh: `cp .env.example .env` và `docker compose up -d --build`).
 
 ---
 
@@ -82,7 +82,7 @@ Theo góp ý đánh giá Bài tập 1 và yêu cầu kỹ thuật của Buổi 1
     - *Ảnh hưởng:* `AuthTokenService.java`, `ForbiddenException.java`, `TransactionController.java`, `StockController.java`.
 11. **TD-BT2-07: Đóng gói Container hóa với Dockerfile Multi-stage và Docker Compose:**
     - *Thay đổi gì:* Bổ sung `Dockerfile` đa tầng và `docker-compose.yml` tích hợp MySQL 8.0 + Backend Spring Boot có healthcheck.
-    - *Vì sao:* Đáp ứng mức đánh giá cao của Thành phần 4 (chạy toàn bộ hệ thống bằng đúng 1 lệnh `docker compose up -d`).
+    - *Vì sao:* Đáp ứng mức đánh giá cao của Thành phần 4 (chạy toàn bộ hệ thống bằng 2 lệnh `cp .env.example .env` và `docker compose up -d --build`).
     - *Ảnh hưởng:* `Dockerfile`, `docker-compose.yml`, `.dockerignore`.
 
 ---
@@ -97,14 +97,14 @@ Theo góp ý đánh giá Bài tập 1 và yêu cầu kỹ thuật của Buổi 1
 | :---: | :--- | :--- | :--- | :--- | :--- |
 | **1** | **Java JDK** | `>= 17 LTS` (Khuyến nghị **Eclipse Temurin 17** hoặc **21 LTS**) | Chạy ứng dụng Spring Boot và thực thi bộ kiểm thử tự động JUnit 5 | `java -version` | [adoptium.net](https://adoptium.net/) |
 | **2** | **Maven Wrapper** | Đã tích hợp sẵn trong repo (`./mvnw` / `mvnw.cmd`) | Biên dịch, quản trị dependencies và chạy ứng dụng mà **không cần cài Maven** | `./mvnw -v` | Đi kèm sẵn trong dự án |
-| **3** | **Docker & Docker Compose** *(Khuyên dùng)* | Docker Engine `>= 20.10`<br>Docker Compose `>= 2.0` | Khởi chạy toàn bộ hệ thống trọn gói (Web + API + DB) bằng đúng 1 lệnh duy nhất | `docker -v`<br>`docker compose version` | [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/) |
+| **3** | **Docker & Docker Compose** *(Khuyên dùng)* | Docker Engine `>= 20.10`<br>Docker Compose `>= 2.0` | Khởi chạy toàn bộ hệ thống trọn gói (Web + API + DB) bằng 2 lệnh | `docker -v`<br>`docker compose version` | [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/) |
 | **4** | **Git** | `>= 2.30` | Sao chép (clone) mã nguồn dự án từ kho lưu trữ GitHub | `git --version` | [git-scm.com](https://git-scm.com/) |
 | **5** | **MySQL Server** *(Tùy chọn)* | `>= 8.0` | Sử dụng nếu muốn chạy trực tiếp Backend với CSDL MySQL cục bộ trên máy thật | `mysql --version` | [dev.mysql.com/downloads](https://dev.mysql.com/downloads/) |
 
 > [!IMPORTANT]
 > **Lựa chọn cách chạy phù hợp với nhu cầu:**
 > - **Cách 1 (Khuyên dùng cho Giảng viên chấm bài / Đánh giá nhanh):** Chạy trực tiếp bằng **Maven Wrapper** với Profile `local` sử dụng CSDL In-Memory H2. Cách này **chạy ngay lập tức trong 5 giây**, tự động nạp dữ liệu hạt giống từ `seeds/`, bật `show-sql` hiển thị rõ mệnh đề khóa `SELECT ... FOR UPDATE` mà **không cần cài đặt MySQL hay bật Docker**.
-> - **Cách 2 (Khuyên dùng khi muốn kiểm tra môi trường Container hoàn chỉnh):** Chạy toàn bộ hệ thống (App Spring Boot + MySQL 8.0) chỉ với **1 lệnh Docker Compose duy nhất (`docker compose up -d`)**.
+> - **Cách 2 (Khuyên dùng khi muốn kiểm tra môi trường Container hoàn chỉnh):** Chạy toàn bộ hệ thống (App Spring Boot + MySQL 8.0) bằng **2 lệnh Docker Compose (`cp .env.example .env` và `docker compose up -d --build`)**.
 
 ---
 
@@ -162,24 +162,47 @@ Nếu muốn chạy trực tiếp với MySQL trên máy thật:
 
 ### 4.4. Cách 2: Chạy toàn bộ hệ thống bằng Docker Compose (≤ 2 lệnh trọn gói)
 
-Nếu máy tính đã cài đặt và đang bật **Docker Desktop**, bạn có thể khởi chạy toàn bộ hệ thống (Ứng dụng Spring Boot + CSDL MySQL 8.0) chỉ với **1 lệnh duy nhất**:
+Nếu máy tính đã cài đặt và đang bật **Docker Desktop**, khởi chạy toàn bộ hệ thống (Ứng dụng Spring Boot + CSDL MySQL 8.0) bằng **đúng 2 lệnh**:
 
 ```bash
+# 1. Tạo tệp cấu hình từ mẫu (giá trị mặc định đã chạy được ngay)
+cp .env.example .env
+
+# 2. Build image và khởi chạy toàn bộ stack ở chế độ nền
 docker compose up -d --build
 ```
-*(Hoặc `docker compose up -d` nếu không cần build lại image)*
 
 Hệ thống tự động thực hiện các tác vụ:
 1. Kéo image MySQL 8.0, cấu hình tài khoản và đợi kiểm tra sức khỏe `mysqladmin ping` thành công.
 2. Build image ứng dụng Spring Boot từ Dockerfile đa tầng (chạy user bảo mật `mekonguser`).
 3. Khởi chạy Backend, thực thi Flyway migration tạo đủ 5 bảng và nạp tự động dữ liệu hạt giống từ `seeds/`.
-4. Mở cổng `8888` sẵn sàng phục vụ tại **`http://localhost:8888/`** *(cổng host mặc định `8888` giúp tránh xung đột với các dịch vụ khác hoặc cổng 8080 bị khóa trên Windows; nếu muốn đổi về cổng `8080`, chỉ cần chạy `APP_PORT=8080 docker compose up -d`)*.
-   - **Giao diện Web Prototype (Docker):** **`http://localhost:8888/`**
-   - **Kiểm tra trạng thái dịch vụ (Health Check):** **`http://localhost:8888/api/health`**
+4. Mở cổng `8888` sẵn sàng phục vụ tại **`http://localhost:8888/`** *(cổng host mặc định `8888` giúp tránh xung đột với các dịch vụ khác hoặc cổng 8080 bị khóa trên Windows; nếu muốn đổi về cổng `8080`, chỉ cần sửa `APP_PORT=8080` trong `.env`)*.
+
+#### Kiểm tra hệ thống đã chạy đúng
+
+```bash
+# Cả hai dịch vụ phải ở trạng thái healthy
+docker compose ps
+
+# Health check phải trả về {"status":"UP", ...}
+curl -s http://localhost:8888/api/health
+```
+
+Kết quả mong đợi:
+- `mekong-mysql` → `healthy`
+- `mekong-inventory-service` → `healthy`
+- `curl` trả về JSON có `"status":"UP"` và `"service":"inventory-service"`.
+- Giao diện Web Prototype: **`http://localhost:8888/`**.
 
 - **Dừng toàn bộ hệ thống khi hoàn tất nghiệm thu:**
   ```bash
   docker compose down
+  ```
+
+- **Xoá sạch dữ liệu và chạy lại từ đầu (phép thử máy trắng):**
+  ```bash
+  docker compose down -v
+  docker compose up -d --build
   ```
 
 ---
@@ -437,7 +460,7 @@ cdtn1-phamtritrong-l5/
 ├── BT2_2374802010525_PhamTriTrong.md # Báo cáo nghiệm thu kỹ thuật toàn diện 7 mục
 ├── BT2_2374802010525_PhamTriTrong.docx # Bản Word Báo cáo nghiệm thu kỹ thuật
 ├── Dockerfile                        # Multi-stage Dockerfile cho Spring Boot (Non-root user)
-├── docker-compose.yml                # Khởi chạy toàn bộ hệ thống (App + MySQL) bằng đúng 1 lệnh
+├── docker-compose.yml                # Khởi chạy toàn bộ hệ thống (App + MySQL) bằng 2 lệnh
 ├── pom.xml                           # Tệp quản lý và khóa phiên bản thư viện Maven
 └── README.md                         # Hướng dẫn cài đặt và vận hành hệ thống
 ```
@@ -446,7 +469,7 @@ cdtn1-phamtritrong-l5/
 
 ## 9. Checklist tiến độ (Nghiệm thu Buổi 12 — Release v0.2)
 
-- [x] **Tiêu chí C1 (Cốt lõi):** Hệ thống clone về chạy được theo đúng README bằng lệnh `./mvnw spring-boot:run` hoặc `docker compose up -d`, không cần bất kỳ can thiệp thủ công nào.
+- [x] **Tiêu chí C1 (Cốt lõi):** Hệ thống clone về chạy được theo đúng README bằng lệnh `./mvnw spring-boot:run -Dspring-boot.run.profiles=local` hoặc chuỗi `cp .env.example .env` + `docker compose up -d --build`, không cần bất kỳ can thiệp thủ công nào.
 - [x] **Tiêu chí C2 (Cốt lõi):** Phân tầng sạch sẽ, đúng trách nhiệm: `controller/` $\rightarrow$ `service/` $\rightarrow$ `repository/`, không gọi chéo sai chiều.
 - [x] **Tiêu chí C3 (Nghiệp vụ thật):** Hiện thực đầy đủ $\ge 2$ quy tắc nghiệp vụ thật:
   - Khóa bi quan chống xuất âm kho đồng thời (`SELECT ... FOR UPDATE` theo QT-09 & NFR-02).
@@ -460,4 +483,4 @@ cdtn1-phamtritrong-l5/
 - [x] **Tiêu chí S2 (Service Clean Track SE):** 100% các tệp trong tầng `service/` không chứa dấu vết HTTP (`req`, `res`, `ResponseEntity`, mã HTTP).
 - [x] **Tiêu chí S3 (Migration & Seeder Track SE):** Tự động Migrate từ CSDL trống bằng Flyway (`V1__init_schema.sql`) và Seeder tự nạp 5 file CSV từ `seeds/`.
 - [x] **Tiêu chí S4 (Frontend Prototype Track SE):** Giao diện 3 màn hình nghiệp vụ kết nối REST API thật, xử lý tập trung đủ 3 trạng thái (*Loading, Empty có nút xóa lọc, Error có nút thử lại*).
-- [x] **Thành phần 4 Mức đánh giá cao (Bonus):** Đóng gói Dockerfile đa tầng và `docker-compose.yml` khởi chạy toàn bộ hệ thống bằng đúng 1 lệnh.
+- [x] **Thành phần 4 Mức đánh giá cao (Bonus):** Đóng gói Dockerfile đa tầng và `docker-compose.yml` khởi chạy toàn bộ hệ thống bằng 2 lệnh, cả hai dịch vụ có healthcheck và dữ liệu mẫu nạp tự động.

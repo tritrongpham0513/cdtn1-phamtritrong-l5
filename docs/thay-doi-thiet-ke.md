@@ -89,3 +89,40 @@
 - **Thay đổi gì:** Bổ sung tệp `Dockerfile` đa tầng (Multi-stage build trên nền Eclipse Temurin 17 JRE tối giản, chạy non-root user `mekonguser`) và tệp `docker-compose.yml` tích hợp sẵn container CSDL MySQL 8.0 và dịch vụ Spring Boot có cơ chế kiểm tra sức khỏe `service_healthy`.
 - **Vì sao:** Đáp ứng mức đánh giá cao của Thành phần 4 (cho phép dựng toàn bộ hệ thống gồm CSDL và Ứng dụng chỉ bằng đúng một lệnh `docker compose up -d`), cộng điểm trực tiếp vào Tiêu chí 2 của Rubric, đồng thời là bước chuẩn bị trực tiếp cho việc triển khai ở Bài tập 3.
 - **Ảnh hưởng tới thành phần nào:** `Dockerfile`, `docker-compose.yml`, `.dockerignore`, `README.md`.
+
+---
+
+## PHẦN 3: Thay đổi trong quá trình thực hiện Bài tập 3 (Kiểm thử và Đóng gói prototype)
+
+### TD-BT3-01: Ràng buộc `X-Center-Id` với trung tâm ghi trong token (BUG-BT3-01)
+- **Thay đổi gì:** Bổ sung `centerId` vào token (`userId:username:role:centerId:issuedAt`) và thêm `AuthTokenService.requireRoleAndCenter()`; áp dụng cho `POST /transactions/import`, `POST /transactions/export`, `POST/PUT/DELETE /stock`.
+- **Vì sao:** Trước khi sửa, client tự gửi `X-Center-Id` và service tin tưởng giá trị này, nên KTV TT01 có thể xuất linh kiện cho phiếu TT04 và Quản lý kho có thể thao tác kho trung tâm khác (lỗ hổng OWASP A01). Header lệch trung tâm trong token nay bị từ chối bằng HTTP 403.
+- **Ảnh hưởng tới thành phần nào:** `AuthTokenService.java`, `AuthController.java`, `TransactionController.java`, `StockController.java`, `AuthTokenServiceTest.java`, `TransactionControllerApiTest.java`, `docs/bug-log.md`.
+
+---
+
+### TD-BT3-02: `/auth/me` trả đúng danh tính phiên đăng nhập (BUG-BT3-02)
+- **Thay đổi gì:** `AuthController` inject `AuthTokenService`, bóc tách `username` từ token và tra đúng `UserProfile` thay vì hard-code `MOCK_USERS.get("ktv_trong")`; token thiếu/không hợp lệ trả HTTP 403.
+- **Vì sao:** Trước khi sửa, mọi phiên đăng nhập đều nhận về cùng một danh tính `ktv_trong` (TECHNICIAN), khiến giao diện hiển thị sai người dùng và cấp sai quyền.
+- **Ảnh hưởng tới thành phần nào:** `AuthController.java`, `AuthControllerTest.java`, `docs/bug-log.md`.
+
+---
+
+### TD-BT3-03: Không lộ chi tiết nội bộ trong phản hồi 500 (BUG-BT3-03)
+- **Thay đổi gì:** `GlobalExceptionHandler.handleGenericException()` ghi log đầy đủ ở server và trả thông báo trung tính `"Đã xảy ra lỗi hệ thống. Vui lòng liên hệ quản trị viên."` với mã `INTERNAL_SERVER_ERROR`.
+- **Vì sao:** Trước khi sửa, body lỗi chứa nguyên `ex.getMessage()`, làm lộ tên bảng, kiểu dữ liệu và chuỗi kết nối CSDL (tiêu chí S4).
+- **Ảnh hưởng tới thành phần nào:** `GlobalExceptionHandler.java`, `GlobalExceptionHandlerTest.java`, `docs/bug-log.md`.
+
+---
+
+### TD-BT3-04: Chuẩn hóa gói đóng gói Docker Compose cho phép thử máy trắng (Thành phần 4)
+- **Thay đổi gì:** Parameter hóa toàn bộ biến trong `docker-compose.yml` theo `.env` với giá trị mặc định an toàn; `.env.example` liệt kê đủ biến (`APP_PORT`, `MYSQL_HOST_PORT`, `MYSQL_*`, `SPRING_PROFILES_ACTIVE`, `SEED_*`); `Dockerfile` viết lại rõ hai tầng và kiểm tra CRLF cho `mvnw`; README ghi đúng 2 lệnh `cp .env.example .env` và `docker compose up -d --build`.
+- **Vì sao:** Phép thử máy trắng yêu cầu clone từ tag `v1.0` vào thư mục trống và dựng hệ thống bằng không quá hai lệnh, không cần hỏi thêm. Cấu hình cũ hard-code mật khẩu và thiếu biến cổng trong `.env.example`, dễ gây lệch giữa tài liệu và lệnh chạy thực tế.
+- **Ảnh hưởng tới thành phần nào:** `docker-compose.yml`, `Dockerfile`, `.env.example`, `README.md`, `docs/images/`.
+
+---
+
+### TD-BT3-05: Healthcheck chỉ báo `healthy` sau khi Flyway và Seeder hoàn tất
+- **Thay đổi gì:** Thêm `StartupReadiness` lắng nghe `ApplicationReadyEvent`; `GET /api/health` trả HTTP 503 `STARTING` trong lúc nạp dữ liệu và chỉ trả HTTP 200 `UP` khi seeder đã xong. `docker-compose.yml` dùng endpoint này cho healthcheck.
+- **Vì sao:** Trước khi sửa, Tomcat nhận request trước khi `CommandLineRunner` nạp xong 7.800 phiếu và 4.954 giao dịch, nên container có thể được báo `healthy` khi dữ liệu mẫu còn đang nạp. Việc này làm phép thử "hệ thống lên được và có dữ liệu mẫu" không ổn định trên máy chậm.
+- **Ảnh hưởng tới thành phần nào:** `StartupReadiness.java`, `HealthController.java`, `docker-compose.yml`, `README.md`.
