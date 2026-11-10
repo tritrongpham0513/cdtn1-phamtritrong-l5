@@ -6,7 +6,7 @@
 * **Ngày chạy:** 10/11/2026
 * **Môi trường:** Windows 11 · JDK 17.0.14 · Apache Maven 3.9.15 · Spring Boot 3.2.5 · JUnit 5 · Mockito · MockMvc · H2 in-memory
 * **Lệnh chạy:** `.\mvnw.cmd clean test` (Windows) / `./mvnw test` (Linux/macOS)
-* **Kết quả tổng:** **28/28 test trong repo PASS** · **12/12 test case báo cáo PASS** · 0 failures · 0 errors · 0 skipped · BUILD SUCCESS.
+* **Kết quả tổng:** **32/32 test trong repo PASS** · **12/12 test case báo cáo PASS** · 0 failures · 0 errors · 0 skipped · BUILD SUCCESS.
 
 **Phân bổ 12 test case báo cáo:** 7 Unit + 2 Integration + 3 API.
 **Phân bổ theo loại:** Luồng đúng 5 · Giá trị biên 2 · Dữ liệu sai 2 · Bảo mật 2 · Tính tái lập 1.
@@ -70,7 +70,7 @@ Lệnh đã chạy:
 Kết quả tổng từ Maven Surefire:
 
 ```text
-[INFO] Tests run: 28, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 32, Failures: 0, Errors: 0, Skipped: 0
 [INFO] BUILD SUCCESS
 ```
 
@@ -78,15 +78,19 @@ Chi tiết từng lớp test trong lần chạy ngày 10/11/2026:
 
 | Lớp test | Số test | Thời gian | Kết quả |
 |---|---:|---:|---|
-| `DataInitializerIntegrationTest` | 1 | 13,60 s | PASS |
-| `TransactionControllerApiTest` | 3 | 1,197 s | PASS |
-| `InventoryApplicationTests` | 2 | 0,006 s | PASS |
-| `AuthTokenServiceTest` | 5 | 0,027 s | PASS |
-| `PartServiceTest` | 5 | 0,336 s | PASS |
-| `PartTransactionIntegrationTest` | 1 | 3,594 s | PASS |
-| `PartTransactionServiceTest` | 7 | 0,577 s | PASS |
-| `StockServiceTest` | 4 | 0,033 s | PASS |
-| **Tổng** | **28** | **~19,4 s test + build ≈ 27 s** | **PASS 100%** |
+| `DataInitializerIntegrationTest` | 1 | 17,640 s | PASS |
+| `GlobalExceptionHandlerTest` | 1 | 0,047 s | PASS |
+| `AuthControllerTest` | 1 | 0,037 s | PASS |
+| `TransactionControllerApiTest` | 3 | 1,747 s | PASS |
+| `InventoryApplicationTests` | 2 | 0,008 s | PASS |
+| `AuthTokenServiceTest` | 7 | 0,050 s | PASS |
+| `PartServiceTest` | 5 | 0,258 s | PASS |
+| `PartTransactionIntegrationTest` | 1 | 2,450 s | PASS |
+| `PartTransactionServiceTest` | 7 | 0,475 s | PASS |
+| `StockServiceTest` | 4 | 0,035 s | PASS |
+| **Tổng** | **32** | **~22,7 s test + build ≈ 32 s** | **PASS 100%** |
+
+Ngoài 12 test case báo cáo, repo còn 20 test khác — trong đó có 3 test hồi quy cho Bug Log BT3 (`AuthTokenServiceTest#testCenterMismatchThrowsForbidden`, `AuthControllerTest#testGetCurrentUser_ReturnsIdentityFromToken`, `GlobalExceptionHandlerTest#testGenericException_DoesNotLeakInternalDetails`).
 
 ---
 
@@ -120,6 +124,6 @@ Linux/macOS thay `.\mvnw.cmd` bằng `./mvnw`. Mọi test dùng H2 in-memory ho�
 
 ## 7. Kết luận
 
-* **12/12 test case báo cáo PASS**, tuyển chọn từ **28/28 test thật** của repo; chạy lại bằng một lệnh duy nhất.
+* **12/12 test case báo cáo PASS**, tuyển chọn từ **32/32 test thật** của repo; chạy lại bằng một lệnh duy nhất.
 * **100% quy tắc nghiệp vụ cốt lõi** có test kiểm chứng trực tiếp: QT-06, QT-09/NFR-02, US-02, US-05, OWASP A01/S2 và C8.
 * **Không còn bug Critical hoặc Major đang mở**; các bug đã sửa được ghi trong `docs/bug-log.md` kèm commit xác nhận.

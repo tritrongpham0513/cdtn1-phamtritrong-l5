@@ -25,10 +25,10 @@
 
 ## 2. Loại test và số lượng mỗi tầng
 
-Repo có **28 automated tests**: **23 unit + 2 integration + 3 API**.
+Repo có **32 automated tests**: **27 unit + 2 integration + 3 API**.
 Báo cáo BT3 tuyển chọn **12 test case tiêu biểu**: **7 unit + 2 integration + 3 API**.
 
-* **23 Unit Tests:** `PartTransactionServiceTest` (7), `PartServiceTest` (5), `StockServiceTest` (4), `AuthTokenServiceTest` (5), `InventoryApplicationTests` (2).
+* **27 Unit Tests:** `PartTransactionServiceTest` (7), `PartServiceTest` (5), `StockServiceTest` (4), `AuthTokenServiceTest` (7), `InventoryApplicationTests` (2), `AuthControllerTest` (1), `GlobalExceptionHandlerTest` (1).
 * **2 Integration Tests (H2 thật):** `DataInitializerIntegrationTest` (seeder chạy 2 lần — C8) và `PartTransactionIntegrationTest` (export + import end-to-end).
 * **3 API Slice Tests:** `TransactionControllerApiTest` — MockMvc standalone, kiểm tra HTTP 201, 422, 403.
 
@@ -38,7 +38,7 @@ Báo cáo BT3 tuyển chọn **12 test case tiêu biểu**: **7 unit + 2 integra
 
 ## 3. Tiêu chí thành công ĐO ĐƯỢC
 
-1. **Tỷ lệ vượt qua:** **28/28 test trong repo** và **12/12 test case báo cáo** PASS 100% qua một lệnh chạy duy nhất.
+1. **Tỷ lệ vượt qua:** **32/32 test trong repo** và **12/12 test case báo cáo** PASS 100% qua một lệnh chạy duy nhất.
 2. **Độ bao phủ quy tắc:** 100% quy tắc cốt lõi (QT-06, QT-09, US-02, US-05, A01/S2, C8) có test kiểm chứng trực tiếp.
 3. **Tồn đọng lỗi:** 0 bug Critical và 0 bug Major đang mở.
 4. **Không suy thoái:** sau mỗi lần sửa bug, 100% test còn lại vẫn PASS.
@@ -61,4 +61,4 @@ Báo cáo BT3 tuyển chọn **12 test case tiêu biểu**: **7 unit + 2 integra
 ---
 
 > ### TRẢ LỜI CÂU HỎI VẤN ĐÁP: "LÀM SAO BIẾT ĐÃ KIỂM THỬ ĐỦ?"
-> *"Thưa thầy, hệ thống có bốn nhóm quy tắc cốt lõi: xuất kho (QT-06, QT-09), nhập kho (US-02), tồn thấp (US-05), và phân quyền theo chủ sở hữu/vai trò (A01/S2). Mỗi nhóm có ít nhất một test luồng đúng; các quy tắc định lượng có cặp biên 10/11 và 5/4. Em có thêm hai test dữ liệu sai, hai test bảo mật, một test tái lập C8 ở mức integration, và ba test API (201, 422, 403). 12 test case báo cáo được chọn từ 28 test thật (PASS 100%), phân bổ 7 unit + 2 integration + 3 API. Em không kiểm thử tự động UI E2E mà kiểm thử thủ công 3 màn hình; NFR-04 đảm bảo bằng thiết kế append-only và bảo lưu test tự động cho CĐTN2 — đã ghi rõ trong Mục 1."*
+> *"Thưa thầy, hệ thống có bốn nhóm quy tắc cốt lõi: xuất kho (QT-06, QT-09), nhập kho (US-02), tồn thấp (US-05), và phân quyền theo chủ sở hữu/vai trò (A01/S2). Mỗi nhóm có ít nhất một test luồng đúng; các quy tắc định lượng có cặp biên 10/11 và 5/4. Em có thêm hai test dữ liệu sai, hai test bảo mật, một test tái lập C8 ở mức integration, và ba test API (201, 422, 403). 12 test case báo cáo được chọn từ 32 test thật (PASS 100%), phân bổ 7 unit + 2 integration + 3 API. Em không kiểm thử tự động UI E2E mà kiểm thử thủ công 3 màn hình; NFR-04 đảm bảo bằng thiết kế append-only và bảo lưu test tự động cho CĐTN2 — đã ghi rõ trong Mục 1."*
