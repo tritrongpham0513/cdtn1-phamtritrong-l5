@@ -1,0 +1,153 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Kien Truc Thuc Te L5" id="arch-l5-actual">
+    <mxGraphModel dx="1241" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1060" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TIÊU ĐỀ CHÍNH SƠ ĐỒ KIẾN TRÚC -->
+        <mxCell id="main-title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontColor=#1a1a2e;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="SƠ ĐỒ KIẾN TRÚC PHÂN TẦNG THỰC TẾ ĐÃ HIỆN THỰC — BÀI TẬP 2&#xa;HỆ THỐNG: Mekong Mobile Smart CRM — Module L5: Kho linh kiện thay thế tại 6 TTBH (Track SE)" vertex="1">
+          <mxGeometry height="45" width="1150" x="50" y="25" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- TẦNG 1: TRÌNH BÀY & CLIENT PROTOTYPE -->
+        <!-- ========================================================================= -->
+        <mxCell id="L1-bg" parent="1" style="rounded=1;arcSize=3;fillColor=#eff6ff;strokeColor=#1d4ed8;strokeWidth=2;fontFamily=Times New Roman;" value="" vertex="1">
+          <mxGeometry height="135" width="1150" x="50" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="L1-title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#1e3a8a;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="1. TẦNG TRÌNH BÀY &amp; CLIENT PROTOTYPE (HTML5 / Vanilla JavaScript / CSS Modern — src/main/resources/static/)" vertex="1">
+          <mxGeometry height="25" width="900" x="70" y="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="M1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#3b82f6;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;[ Màn hình M1: Quản lý tồn kho ]&lt;/b&gt;&#xa;• Tra cứu số lượng tồn khả dụng (QT-14)&#xa;• Cảnh báo tồn thấp &amp; 4 thẻ chỉ số KPI tổng quan&#xa;• Cụm nút CRUD: Thêm mới, Nhập, Sửa, Xóa&#xa;&lt;i&gt;Tệp: index.html (#screen-stock)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="350" x="70" y="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="M2-M3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf4ff;strokeColor=#9333ea;strokeWidth=2;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;[ Màn hình M2 &amp; M3: Xuất kho &amp; Lịch sử giao dịch ]&lt;/b&gt;&#xa;• &lt;b&gt;M2:&lt;/b&gt; Tạo phiếu xuất linh kiện, gắn mã phiếu sửa chữa&#xa;• Kiểm tra tồn tức thời Client-side trước khi gửi&#xa;• &lt;b&gt;M3:&lt;/b&gt; Tra cứu vết biến động kho (IMPORT, EXPORT, ADJUST)&#xa;&lt;i&gt;Tệp: index.html (#screen-export &amp; #screen-transactions)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="410" x="440" y="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="UI-states" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;[ 3 Trạng thái UI bắt buộc ]&lt;/b&gt;&#xa;⏳ &lt;b&gt;Loading:&lt;/b&gt; Spinner xoay + Vùng chờ mờ&#xa;📭 &lt;b&gt;Empty:&lt;/b&gt; Thông điệp hướng dẫn thao tác&#xa;⚠️ &lt;b&gt;Error:&lt;/b&gt; Hộp thông báo lỗi + Nút Thử lại&#xa;&lt;i&gt;Tệp: app.js &amp; style.css&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="280" x="870" y="120" as="geometry" />
+        </mxCell>
+
+        <!-- THANH CHUYỂN TẦNG 1 -> 2: HTTP + JSON -->
+        <mxCell id="arr1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;strokeWidth=1.5;fontSize=12;align=center;fontFamily=Times New Roman;fontStyle=1;fontColor=#1e40af;" value="▼   HTTP / REST API (JSON) — Fetch Asynchronous, Bearer Token RBAC &amp; Chuẩn lỗi RFC 7807   ▼" vertex="1">
+          <mxGeometry height="28" width="1150" x="50" y="225" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- TẦNG 2: CONTROLLER & API ROUTING -->
+        <!-- ========================================================================= -->
+        <mxCell id="L2-bg" parent="1" style="rounded=1;arcSize=3;fillColor=#f0fdf4;strokeColor=#15803d;strokeWidth=2;fontFamily=Times New Roman;" value="" vertex="1">
+          <mxGeometry height="135" width="1150" x="50" y="263" as="geometry" />
+        </mxCell>
+        <mxCell id="L2-title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#14532d;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="2. TẦNG ĐIỀU KHIỂN &amp; ĐỊNH TUYẾN REST API (package com.mekong.crm.controller)" vertex="1">
+          <mxGeometry height="25" width="900" x="70" y="273" as="geometry" />
+        </mxCell>
+
+        <mxCell id="C-Stock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#22c55e;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;PartController &amp; StockController&lt;/b&gt;&#xa;• &lt;code&gt;/api/parts&lt;/code&gt;: CRUD danh mục, tìm theo SKU/tên&#xa;• &lt;code&gt;/api/stock/{centerId}&lt;/code&gt;: Tồn khả dụng theo TTBH&#xa;• &lt;code&gt;/api/stock/low-stock&lt;/code&gt;: Danh sách tồn dưới ngưỡng&#xa;• Validate dữ liệu đầu vào với @Valid &amp; DTO" vertex="1">
+          <mxGeometry height="80" width="350" x="70" y="303" as="geometry" />
+        </mxCell>
+
+        <mxCell id="C-Tx" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf4ff;strokeColor=#9333ea;strokeWidth=2;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;TransactionController&lt;/b&gt; (@RestController)&#xa;• &lt;code&gt;POST /api/stock/transactions/export&lt;/code&gt; (Xuất linh kiện)&#xa;• &lt;code&gt;POST /api/stock/transactions/import&lt;/code&gt; (Nhập linh kiện)&#xa;• &lt;code&gt;GET /api/stock/transactions&lt;/code&gt; (Lịch sử giao dịch kho)&#xa;• Trả TransactionResponseDTO chuẩn, không lộ Entity" vertex="1">
+          <mxGeometry height="80" width="410" x="440" y="303" as="geometry" />
+        </mxCell>
+
+        <mxCell id="C-Advice" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#e11d48;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;GlobalExceptionHandler &amp; Security&lt;/b&gt;&#xa;• (@RestControllerAdvice) Bắt ngoại lệ toàn cục&#xa;• Bắt InsufficientStockException &amp; EntityNotFound&#xa;• Trả JSON RFC 7807: {type, title, status, detail}&#xa;• RBAC Filter: Kiểm tra vai trò Admin, Kho, KTV" vertex="1">
+          <mxGeometry height="80" width="280" x="870" y="303" as="geometry" />
+        </mxCell>
+
+        <!-- THANH CHUYỂN TẦNG 2 -> 3: JAVA METHOD CALLS (NON-HTTP) -->
+        <mxCell id="arr2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;fontSize=12;align=center;fontFamily=Times New Roman;fontStyle=1;fontColor=#15803d;" value="▼   Java Method Calls (100% Non-HTTP DTO / POJO) — Tách biệt hoàn toàn với Servlet Request/Response   ▼" vertex="1">
+          <mxGeometry height="28" width="1150" x="50" y="408" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- TẦNG 3: DỊCH VỤ NGHIỆP VỤ — MODULE CỐT LÕI -->
+        <!-- ========================================================================= -->
+        <mxCell id="L3-bg" parent="1" style="rounded=1;arcSize=3;fillColor=#faf5ff;strokeColor=#7e22ce;strokeWidth=2;fontFamily=Times New Roman;" value="" vertex="1">
+          <mxGeometry height="145" width="1150" x="50" y="446" as="geometry" />
+        </mxCell>
+        <mxCell id="L3-title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#581c87;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="3. TẦNG DỊCH VỤ NGHIỆP VỤ — MODULE CỐT LÕI (package com.mekong.crm.service [100% Non-HTTP])" vertex="1">
+          <mxGeometry height="25" width="900" x="70" y="456" as="geometry" />
+        </mxCell>
+
+        <mxCell id="S-Part" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#a855f7;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;PartServiceImpl &amp; StockAlertServiceImpl&lt;/b&gt;&#xa;• Nghiệp vụ quản lý danh mục linh kiện &amp; giá&#xa;• Kiểm tra trùng lặp SKU, hợp lệ đời máy&#xa;• Quét ngưỡng an toàn (min_threshold) theo TTBH&#xa;• Kích hoạt cờ cảnh báo thiếu hụt linh kiện tự động" vertex="1">
+          <mxGeometry height="85" width="350" x="70" y="488" as="geometry" />
+        </mxCell>
+
+        <mxCell id="S-Tx" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf4ff;strokeColor=#c026d3;strokeWidth=2.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b style=&quot;color:#86198f;&quot;&gt;StockTransactionServiceImpl (MODULE CỐT LÕI)&lt;/b&gt;&#xa;• Xử lý xuất kho với tính nguyên tử &lt;b&gt;@Transactional&lt;/b&gt;&#xa;• Kiểm tra tồn khả dụng: &lt;b&gt;export_qty &amp;lt;= total - reserved&lt;/b&gt;&#xa;• Ném InsufficientStockException nếu thiếu hàng&#xa;• Trừ tồn an toàn &amp; sinh bản ghi giao dịch bất biến&#xa;&lt;b style=&quot;color:#b91c1c;&quot;&gt;★ Độc lập 100% HTTP — Cho phép gọi từ CLI, Job, Test&lt;/b&gt;" vertex="1">
+          <mxGeometry height="90" width="410" x="440" y="485" as="geometry" />
+        </mxCell>
+
+        <mxCell id="S-Audit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#a855f7;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;AuditLogService &amp; RBAC Authorization&lt;/b&gt;&#xa;• Ghi nhận vết kiểm toán bất biến (Immutable Audit)&#xa;• Lưu UserId, TTBH, Loại thao tác, Dấu thời gian&#xa;• Kiểm tra quyền hạn ma trận RBAC 4 vai trò:&#xa;  Admin (Toàn quyền), Kho, KTV, Lễ tân" vertex="1">
+          <mxGeometry height="85" width="280" x="870" y="488" as="geometry" />
+        </mxCell>
+
+        <!-- THANH CHUYỂN TẦNG 3 -> 4: SPRING DATA JPA & KHÓA BI QUAN -->
+        <mxCell id="arr3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#7e22ce;strokeWidth=1.5;fontSize=12;align=center;fontFamily=Times New Roman;fontStyle=1;fontColor=#6b21a8;" value="▼   Spring Data JPA &amp; Khóa bi quan (@Lock(LockModeType.PESSIMISTIC_WRITE) ➔ SELECT ... FOR UPDATE)   ▼" vertex="1">
+          <mxGeometry height="28" width="1150" x="50" y="601" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- TẦNG 4: DATA ACCESS / REPOSITORY -->
+        <!-- ========================================================================= -->
+        <mxCell id="L4-bg" parent="1" style="rounded=1;arcSize=3;fillColor=#fff7ed;strokeColor=#c2410c;strokeWidth=2;fontFamily=Times New Roman;" value="" vertex="1">
+          <mxGeometry height="140" width="1150" x="50" y="639" as="geometry" />
+        </mxCell>
+        <mxCell id="L4-title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#7c2d12;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="4. TẦNG TRUY XUẤT DỮ LIỆU &amp; KHÓA DỮ LIỆU ĐỒNG THỜI (package com.mekong.crm.repository [Spring Data JPA])" vertex="1">
+          <mxGeometry height="25" width="900" x="70" y="649" as="geometry" />
+        </mxCell>
+
+        <mxCell id="R-Part" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#f97316;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;PartRepository &amp; CenterRepository&lt;/b&gt;&#xa;• &lt;code&gt;findBySku(String sku)&lt;/code&gt;&#xa;• &lt;code&gt;findByCategoryAndActive(cat, true)&lt;/code&gt;&#xa;• &lt;code&gt;findAllActiveCenters()&lt;/code&gt;&#xa;• Quản lý 6 TTBH tại Đồng bằng Sông Cửu Long" vertex="1">
+          <mxGeometry height="80" width="350" x="70" y="682" as="geometry" />
+        </mxCell>
+
+        <mxCell id="R-Stock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f2;strokeColor=#e11d48;strokeWidth=2.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b style=&quot;color:#991b1b;&quot;&gt;PartStockRepository &amp; StockTxRepository&lt;/b&gt;&#xa;• &lt;b&gt;findByPartIdAndCenterId(partId, centerId)&lt;/b&gt;&#xa;• &lt;b style=&quot;color:#b91c1c;&quot;&gt;★ KHÓA BI QUAN CHỐNG ĐUA LỆNH (CONCURRENCY):&lt;/b&gt;&#xa;  Khóa dòng &lt;b&gt;SELECT ... FOR UPDATE&lt;/b&gt; ngăn chặn Lost Update&#xa;• &lt;code&gt;StockTransactionRepository.save()&lt;/code&gt; lưu vết giao dịch" vertex="1">
+          <mxGeometry height="85" width="410" x="440" y="679" as="geometry" />
+        </mxCell>
+
+        <mxCell id="R-Flyway" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#f97316;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;Flyway Database Migration&lt;/b&gt;&#xa;• Quản lý phiên bản Schema tự động:&#xa;  - &lt;code&gt;V1__init_schema.sql&lt;/code&gt; (Khởi tạo 6 bảng)&#xa;  - &lt;code&gt;V2__seed_data.sql&lt;/code&gt; (Seed dữ liệu mẫu L5)&#xa;  - &lt;code&gt;V3__rbac_setup.sql&lt;/code&gt; (Cấu hình User/Role)" vertex="1">
+          <mxGeometry height="80" width="280" x="870" y="682" as="geometry" />
+        </mxCell>
+
+        <!-- THANH CHUYỂN TẦNG 4 -> 5: JDBC / SQL INNODB ENGINE -->
+        <mxCell id="arr4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#ea580c;strokeWidth=1.5;fontSize=12;align=center;fontFamily=Times New Roman;fontStyle=1;fontColor=#9a3412;" value="▼   JDBC Driver / InnoDB Row-Level Locking Engine / ACID Transaction Management   ▼" vertex="1">
+          <mxGeometry height="28" width="1150" x="50" y="789" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- TẦNG 5: PERSISTENCE & DATABASE LAYER -->
+        <!-- ========================================================================= -->
+        <mxCell id="L5-bg" parent="1" style="rounded=1;arcSize=3;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=2;fontFamily=Times New Roman;" value="" vertex="1">
+          <mxGeometry height="140" width="1150" x="50" y="827" as="geometry" />
+        </mxCell>
+        <mxCell id="L5-title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#0f172a;fillColor=none;strokeColor=none;fontFamily=Times New Roman;" value="5. TẦNG CƠ SỞ DỮ LIỆU &amp; HẠ TẦNG VẬN HÀNH (MySQL 8.0 &amp; H2 Database)" vertex="1">
+          <mxGeometry height="25" width="900" x="70" y="837" as="geometry" />
+        </mxCell>
+
+        <mxCell id="DB-Master" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;Bảng danh mục hệ thống:&lt;/b&gt;&#xa;• &lt;b&gt;parts:&lt;/b&gt; id, sku, name, model, price, status&#xa;• &lt;b&gt;centers:&lt;/b&gt; id, code, name, address, phone&#xa;• &lt;b&gt;users / roles:&lt;/b&gt; tài khoản, mật khẩu băm, vai trò" vertex="1">
+          <mxGeometry height="80" width="350" x="70" y="870" as="geometry" />
+        </mxCell>
+
+        <mxCell id="DB-Core" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff1f2;strokeColor=#e11d48;strokeWidth=2;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b style=&quot;color:#991b1b;&quot;&gt;Bảng dữ liệu biến động tồn kho (CỐT LÕI):&lt;/b&gt;&#xa;• &lt;b&gt;part_stocks:&lt;/b&gt; part_id, center_id, quantity, reserved, min_threshold&#xa;  ➔ Khóa dòng Row-Level Lock khi xuất kho chống âm kho&#xa;• &lt;b&gt;stock_transactions:&lt;/b&gt; id, part_id, center_id, type, qty, ticket_no, user_id" vertex="1">
+          <mxGeometry height="80" width="410" x="440" y="870" as="geometry" />
+        </mxCell>
+
+        <mxCell id="DB-Engines" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;strokeWidth=1.5;fontSize=12;align=left;spacingLeft=8;fontFamily=Times New Roman;" value="&lt;b&gt;Hạ tầng lưu trữ kép:&lt;/b&gt;&#xa;• &lt;b&gt;MySQL 8.0 (Docker):&lt;/b&gt; InnoDB Engine, Port 3306&#xa;• &lt;b&gt;H2 In-Memory (Test):&lt;/b&gt; jdbc:h2:mem:testdb&#xa;  ➔ Chạy 17/17 test tự động PASS 100% trong 7.17s" vertex="1">
+          <mxGeometry height="80" width="280" x="870" y="870" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- CHÚ THÍCH HỆ THỐNG (LEGEND & FOOTER) -->
+        <!-- ========================================================================= -->
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontSize=12;align=center;fontFamily=Times New Roman;fontColor=#334155;" value="&lt;b&gt;CHÚ THÍCH THIẾT KẾ:&lt;/b&gt;   [ ] = Màn hình giao diện Prototype   |   ▼ = Hướng phụ thuộc 1 chiều Top-Down (Layered Architecture)   |   &lt;b style=&quot;color:#b91c1c;&quot;&gt;Khung đỏ/tím&lt;/b&gt; = Module Cốt lõi &amp; Khóa bi quan chống tranh chấp&#xa;&lt;b&gt;NGOÀI PHẠM VI (WON&#39;T):&lt;/b&gt;   Tự động đặt hàng nhà cung cấp ngoài   |   Điều phối xe luân chuyển liên tỉnh   |   Dự báo tồn kho bằng mô hình AI chuyên sâu" vertex="1">
+          <mxGeometry height="48" width="1150" x="50" y="980" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
