@@ -205,6 +205,35 @@ Kết quả mong đợi:
   docker compose up -d --build
   ```
 
+#### Bằng chứng phép thử máy trắng (đã tự chạy ngày 10/11/2026)
+
+Thực hiện đúng các bước giảng viên sẽ làm: clone tag `v1.0` vào thư mục trống, tạo `.env` từ mẫu, dựng bằng 2 lệnh.
+
+```text
+git clone --branch v1.0 --depth 1 https://github.com/tritrongpham0513/cdtn1-phamtritrong-l5.git
+cp .env.example .env
+docker compose up -d --build
+```
+
+Kết quả quan sát thật:
+
+```text
+23:48:41  GET /api/health -> 503 (STARTING, seeder đang nạp dữ liệu)
+23:48:51  GET /api/health -> 200 (UP)
+
+NAME                       STATUS
+mekong-mysql               Up (healthy)
+mekong-inventory-service   Up (healthy)  0.0.0.0:8888->8080/tcp
+
+service_centers      6
+parts                180
+tickets              7800
+part_stock           717
+part_transactions    4954
+```
+
+Chạy lại bộ kiểm thử trong chính thư mục clone tag `v1.0`: **32/32 PASS**, BUILD SUCCESS.
+
 ---
 
 ## 5. Hướng dẫn chạy Bộ kiểm thử (Automated Tests)

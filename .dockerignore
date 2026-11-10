@@ -6,4 +6,7 @@ target/
 *.md
 docs/
 *.log
-
+*.pdf
+*.docx
+*.drawio
+*.fig
