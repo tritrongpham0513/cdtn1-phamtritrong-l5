@@ -4,6 +4,8 @@ import com.mekongmobile.inventory.dto.response.ApiResponseDTO;
 import com.mekongmobile.inventory.exception.BusinessRuleException;
 import com.mekongmobile.inventory.exception.ForbiddenException;
 import com.mekongmobile.inventory.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -20,6 +22,8 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleValidationException(MethodArgumentNotValidException ex) {
@@ -63,7 +67,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleGenericException(Exception ex) {
+        // Ghi log đầy đủ ở server, nhưng KHÔNG trả chi tiết nội bộ ra client (S4).
+        log.error("Lỗi hệ thống chưa được xử lý", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponseDTO.fail("INTERNAL_SERVER_ERROR", "Lỗi xử lý hệ thống: " + ex.getMessage(), null));
+                .body(ApiResponseDTO.fail(
+                        "INTERNAL_SERVER_ERROR",
+                        "Đã xảy ra lỗi hệ thống. Vui lòng liên hệ quản trị viên.",
+                        null
+                ));
     }
 }
