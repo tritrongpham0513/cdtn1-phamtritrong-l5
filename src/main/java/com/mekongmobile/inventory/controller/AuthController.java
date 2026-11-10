@@ -4,7 +4,10 @@ import com.mekongmobile.inventory.dto.request.LoginRequestDTO;
 import com.mekongmobile.inventory.dto.response.ApiResponseDTO;
 import com.mekongmobile.inventory.dto.response.LoginResponseDTO;
 import com.mekongmobile.inventory.exception.BusinessRuleException;
+import com.mekongmobile.inventory.exception.ForbiddenException;
+import com.mekongmobile.inventory.service.AuthTokenService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +20,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
 public class AuthController {
+
+    private final AuthTokenService authTokenService;
 
     private static final Map<String, UserProfile> MOCK_USERS = Map.of(
             "ktv_trong",
@@ -71,19 +77,23 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponseDTO<LoginResponseDTO>> getCurrentUser(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new BusinessRuleException("Chưa đăng nhập hoặc phiên làm việc đã hết hạn");
+        AuthTokenService.UserPrincipal principal = authTokenService.extractUser(authHeader);
+        if (principal == null) {
+            throw new ForbiddenException("Từ chối truy cập (403 Forbidden): Chưa đăng nhập hoặc token không hợp lệ.");
         }
 
-        // Mặc định trả về thông tin sinh viên Phạm Trí Trọng nếu token hợp lệ
-        UserProfile defaultUser = MOCK_USERS.get("ktv_trong");
+        UserProfile user = MOCK_USERS.get(principal.username().toLowerCase());
+        if (user == null) {
+            throw new ForbiddenException("Từ chối truy cập (403 Forbidden): Tài khoản trong token không tồn tại.");
+        }
+
         LoginResponseDTO response = LoginResponseDTO.builder()
-                .userId(defaultUser.userId)
-                .username(defaultUser.username)
-                .fullName(defaultUser.fullName)
-                .role(defaultUser.role)
-                .centerId(defaultUser.centerId)
-                .centerName(defaultUser.centerName)
+                .userId(user.userId)
+                .username(user.username)
+                .fullName(user.fullName)
+                .role(user.role)
+                .centerId(user.centerId)
+                .centerName(user.centerName)
                 .token(authHeader.substring(7))
                 .build();
 
