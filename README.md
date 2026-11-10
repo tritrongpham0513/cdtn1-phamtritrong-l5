@@ -26,7 +26,7 @@ Hệ thống ứng dụng kỹ thuật **Khóa bi quan (`SELECT ... FOR UPDATE` 
 - **Frontend Prototype:** HTML5, CSS3 hiện đại, Vanilla JavaScript (ES6+), FontAwesome / Lucide Icons. Kiến trúc gọi API tách lớp riêng biệt ([`api.js`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/src/main/resources/static/js/api.js) và [`app.js`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/src/main/resources/static/js/app.js)), tích hợp đầy đủ xử lý tập trung 3 trạng thái giao diện: *Đang tải (Loading skeleton/spinner), Rỗng (Empty State có nút xóa bộ lọc), và Lỗi kết nối (Error State với banner cảnh báo và nút thử lại ngay)*.
 - **Backend:** Java 17 LTS, Spring Boot 3.2.5, Spring Data JPA, Hibernate ORM, Flyway Migration. Kiến trúc phân tầng sạch (Clean Architecture) tách biệt nghiêm ngặt: `controller/` (REST API & DTO mapping) ↔ `service/` (100% nghiệp vụ thuần túy, hoàn toàn không phụ thuộc HTTP) ↔ `repository/` (Spring Data JPA truy xuất CSDL, hỗ trợ Khóa bi quan `PESSIMISTIC_WRITE`).
 - **Cơ sở dữ liệu:** MySQL 8.0 (triển khai production/Docker) kết hợp H2 In-Memory Database (môi trường kiểm thử và chạy local độc lập). Lược đồ 5 bảng chuẩn 3NF: `service_centers`, `parts`, `tickets` (Read-only từ L2/L4), `part_stock`, `part_transactions`.
-- **Kiểm thử tự động:** JUnit 5, Mockito, Spring Boot Test, H2 In-Memory. 17 kịch bản kiểm thử tự động bao phủ trọn vẹn 3 nhóm: Luồng đúng (Happy path), Giá trị biên (Boundary), Dữ liệu sai & Ràng buộc bảo mật (Invalid data & RBAC).
+- **Kiểm thử tự động:** JUnit 5, Mockito, MockMvc, H2 In-Memory. 28 kịch bản kiểm thử tự động (23 Unit + 2 Integration + 3 API) bao phủ trọn vẹn mô hình Kim tự tháp: Unit test nghiệp vụ (Happy path, Boundary, Negative data, RBAC và Chủ sở hữu dữ liệu S2), Integration test tính tái lập Seeder (C8) và export/import end-to-end trên H2, cùng REST API slice test (HTTP 201, 422, 403).
 - **Đóng gói & Triển khai:** Docker Multi-stage build (JRE Eclipse Temurin 17 non-root user `mekonguser`), Docker Compose v2 ([`docker-compose.yml`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/docker-compose.yml) khởi chạy trọn gói Backend + Database bằng đúng 1 lệnh).
 
 ---
@@ -186,9 +186,9 @@ Hệ thống tự động thực hiện các tác vụ:
 
 ## 5. Hướng dẫn chạy Bộ kiểm thử (Automated Tests)
 
-*(Yêu cầu: Đã cài JDK 17+. Toàn bộ 17 kịch bản kiểm thử chạy hoàn toàn độc lập trên CSDL H2 in-memory, không phụ thuộc vào dữ liệu máy cá nhân hay MySQL ngoài)*:
+*(Yêu cầu: Đã cài JDK 17+. Toàn bộ 28 kịch bản kiểm thử chạy hoàn toàn độc lập, không phụ thuộc vào dữ liệu máy cá nhân hay MySQL ngoài)*:
 
-Chạy toàn bộ 17 test cases bằng **MỘT lệnh duy nhất**:
+Chạy toàn bộ 28 test cases bằng **MỘT lệnh duy nhất**:
 
 - **Trên Linux / macOS:**
   ```bash
@@ -199,31 +199,39 @@ Chạy toàn bộ 17 test cases bằng **MỘT lệnh duy nhất**:
   .\mvnw.cmd test
   ```
 
-### Kết quả kiểm chứng (17/17 tests PASS 100%):
+### Kết quả kiểm chứng (28/28 tests PASS 100%):
 
 ```text
 [INFO] -------------------------------------------------------
 [INFO]  T E S T S
 [INFO] -------------------------------------------------------
+[INFO] Running com.mekongmobile.inventory.config.DataInitializerIntegrationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Running com.mekongmobile.inventory.controller.TransactionControllerApiTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.InventoryApplicationTests
-[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.134 s
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.service.AuthTokenServiceTest
-[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.065 s
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.service.PartServiceTest
-[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.300 s
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Running com.mekongmobile.inventory.service.PartTransactionIntegrationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.service.PartTransactionServiceTest
-[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.570 s
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Running com.mekongmobile.inventory.service.StockServiceTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] Results:
 [INFO] 
-[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 28, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
-[INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
 ```
 
-Bao quát đầy đủ 3 loại kiểm thử theo yêu cầu Rubric BT2:
+Chi tiết 12 test case báo cáo: `docs/test-report.md`. Kế hoạch kiểm thử: `docs/test-plan.md`.
+
+Bao quát 5 loại kiểm thử theo yêu cầu BT3:
 
 - **Loại 1: Luồng đúng (Happy Path / Normal Flow):**
   - `testExportPart_Success_NormalFlow`: KTV xuất kho thành công khi tồn đủ và phiếu bảo hành ở trạng thái hợp lệ `DANG_XU_LY`, tồn kho giảm chính xác, sinh giao dịch `EXPORT`.
@@ -233,7 +241,7 @@ Bao quát đầy đủ 3 loại kiểm thử theo yêu cầu Rubric BT2:
   - `getPartByCode_Success` & `updatePart_Success`: Đọc chi tiết và cập nhật thông tin linh kiện thành công.
 - **Loại 2: Giá trị biên (Boundary Conditions):**
   - `testExportPart_Boundary_ExactStockQuantity`: Xuất số lượng đúng bằng toàn bộ tồn kho hiện tại (`quantity == stock -> stock = 0`), tồn về đúng 0 mà không bị âm, tự động kích hoạt cờ cảnh báo tồn thấp `isLowStock = true`.
-  - `contextLoads` & Spring Boot context: Kiểm tra nạp cấu hình hệ thống tại ngưỡng biên.
+  - `testPartStockLowStockAlert`: Kiểm ngưỡng tồn thấp tại biên 5/4 — tồn 5 bằng ngưỡng không cảnh báo, tồn 4 dưới ngưỡng cảnh báo.
 - **Loại 3: Dữ liệu sai & Ràng buộc bảo mật (Invalid Data & RBAC):**
   - `testExportPart_Error_OverStockAttempt`: Cố tình xuất vượt tồn kho (`quantity > stock`) $\rightarrow$ Bị từ chối ngay lập tức, ném ngoại lệ rõ ràng, số tồn kho giữ nguyên (QT-09 & NFR-02).
   - `testExportPart_Error_InvalidTicketStatus`: Từ chối xuất linh kiện cho Phiếu bảo hành đã đóng (`DA_DONG`) (QT-06).
@@ -242,6 +250,13 @@ Bao quát đầy đủ 3 loại kiểm thử theo yêu cầu Rubric BT2:
   - `testTechnicianCannotImport`: Kỹ thuật viên cố tình Nhập kho $\rightarrow$ Bị chặn với lỗi `ForbiddenException` (HTTP 403 Forbidden theo QT-14).
   - `testManagerCannotExport`: Quản lý kho cố tình Xuất kho thay KTV $\rightarrow$ Bị chặn với lỗi `ForbiddenException` (HTTP 403 Forbidden theo QT-14).
   - `testMissingTokenThrowsForbidden`: Không truyền token $\rightarrow$ Bị từ chối HTTP 403 yêu cầu đăng nhập.
+- **Loại 4: Bảo mật theo chủ sở hữu (OWASP A01 / S2):**
+  - `testExportPart_Error_CrossCenterOwnershipViolation`: KTV TT01 không được xuất linh kiện cho phiếu thuộc TT02.
+  - `testImportPart_ForbiddenForTechnician`: TECHNICIAN gọi API nhập kho của Quản lý $\rightarrow$ HTTP 403.
+- **Loại 5: Tính tái lập (C8):**
+  - `testSeeder_RunTwice_DoesNotDuplicateData`: Seeder chạy lần 2 không lỗi và không nhân đôi dữ liệu trên H2.
+- **Integration end-to-end:** `testExportThenImport_EndToEnd_PersistsStockAndLedger` — xuất 4 rồi nhập 20, tồn 10 → 6 → 26, sổ cái đủ 2 bản ghi.
+- **API slice:** `TransactionControllerApiTest` — kiểm HTTP 201, 422 và 403 qua MockMvc.
 
 ---
 
@@ -407,7 +422,7 @@ cdtn1-phamtritrong-l5/
 │   │       ├── application.properties # Cấu hình chung của ứng dụng
 │   │       ├── application-dev.properties # Cấu hình môi trường MySQL
 │   │       └── application-local.properties # Cấu hình môi trường H2 In-Memory chạy ngay
-│   └── test/                         # Bộ kiểm thử tự động 17 test cases (JUnit 5 + Mockito + H2)
+│   └── test/                         # Bộ kiểm thử tự động 28 test cases (JUnit 5 + Mockito + MockMvc + H2)
 ├── .dockerignore                     # Loại trừ file thừa khi đóng gói Docker
 ├── .env.example                      # Biến môi trường mẫu đầy đủ
 ├── .gitignore                        # Loại trừ .env thật, thư mục target/ và file tạm
@@ -429,7 +444,7 @@ cdtn1-phamtritrong-l5/
   - Khóa bi quan chống xuất âm kho đồng thời (`SELECT ... FOR UPDATE` theo QT-09 & NFR-02).
   - Kiểm soát xuất linh kiện gắn chặt với vòng đời phiếu bảo hành (`DANG_XU_LY` theo QT-06).
   - Phân quyền nghiêm ngặt theo vai trò RBAC (KTV xuất kho, QLK nhập kho theo QT-14).
-- [x] **Tiêu chí C4 (Kiểm thử tự động):** 17/17 test cases PASS 100% bằng đúng một lệnh `./mvnw test`, bao phủ trọn vẹn 3 nhóm: Luồng đúng, Giá trị biên, Dữ liệu sai.
+- [x] **Tiêu chí C4 (Kiểm thử tự động):** 28/28 test cases PASS 100% bằng đúng một lệnh `./mvnw test`, bao phủ trọn vẹn mô hình kim tự tháp: Luồng đúng, Giá trị biên, Dữ liệu sai, Tính tái lập C8, RBAC và Chủ sở hữu dữ liệu S2 (23 unit + 2 integration + 3 API).
 - [x] **Tiêu chí C5 (Tính Idempotent):** Chạy lại lần thứ hai không bị lỗi trùng khóa và không nhân đôi dữ liệu nhờ cơ chế Unique Keys trong `DataInitializer.java`.
 - [x] **Tiêu chí C6 (Quản lý cấu hình):** Khóa phiên bản phụ thuộc trong `pom.xml`, khai báo đầy đủ biến môi trường tại `.env.example`, `.env` thật được `.gitignore` bảo vệ tuyệt đối.
 - [x] **Tiêu chí C7 (Xử lý lỗi):** Dữ liệu vào không hợp lệ được từ chối an toàn với thông báo lỗi chuẩn RFC-7807 qua `GlobalExceptionHandler`, không làm sập ứng dụng.

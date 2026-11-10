@@ -29,11 +29,11 @@ class InventoryApplicationTests {
     @Test
     @DisplayName("Kiểm tra quy tắc US-05: Cảnh báo tồn thấp khi quantity < min_threshold")
     void testPartStockLowStockAlert() {
-        PartStock stockLow = PartStock.builder().quantity(3).minThreshold(5).build();
+        PartStock stockLow = PartStock.builder().quantity(4).minThreshold(5).build();
         PartStock stockEqual = PartStock.builder().quantity(5).minThreshold(5).build();
         PartStock stockHigh = PartStock.builder().quantity(10).minThreshold(5).build();
 
-        assertTrue(stockLow.isLowStock(), "Tồn 3 < ngưỡng 5 phải kích hoạt cảnh báo");
+        assertTrue(stockLow.isLowStock(), "Tồn 4 < ngưỡng 5 phải kích hoạt cảnh báo");
         assertFalse(stockEqual.isLowStock(), "Tồn 5 = ngưỡng 5 không kích hoạt cảnh báo");
         assertFalse(stockHigh.isLowStock(), "Tồn 10 > ngưỡng 5 không kích hoạt cảnh báo");
     }

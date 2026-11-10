@@ -136,6 +136,31 @@ class PartTransactionServiceTest {
         verify(partTransactionRepository, times(1)).save(any(PartTransaction.class));
     }
 
+    @Test
+    @DisplayName("Loại 1b (Luồng đúng): Nhập kho bổ sung thành công, số lượng tồn tăng và ghi sổ cái bất biến (US-02)")
+    void testImportPart_Success_NormalFlow() {
+        ImportTransactionRequestDTO request = ImportTransactionRequestDTO.builder()
+                .partId("PIN-IP15")
+                .quantity(20)
+                .performedBy("Quản lý kho")
+                .note("Nhập bổ sung lô hàng mới")
+                .build();
+
+        when(serviceCenterRepository.findById(1L)).thenReturn(Optional.of(center));
+        when(partRepository.findByPartCode("PIN-IP15")).thenReturn(Optional.of(part));
+        when(partStockRepository.findByCenterIdAndPartCode(1L, "PIN-IP15")).thenReturn(Optional.of(stock));
+        when(partStockRepository.save(any(PartStock.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        TransactionResponseDTO response = transactionService.importPart(1L, request);
+
+        assertNotNull(response);
+        assertEquals("IMPORT", response.getTransactionType());
+        assertEquals(30, stock.getQuantity(), "Số tồn kho từ 10 cộng thêm 20 phải thành 30");
+        assertEquals(30, response.getRemainingStock());
+        assertFalse(response.getIsLowStock(), "Tồn 30 > ngưỡng 5 không được cảnh báo");
+        verify(partTransactionRepository, times(1)).save(any(PartTransaction.class));
+    }
+
     // =========================================================================
     // LOẠI 2: GIÁ TRỊ BIÊN (BOUNDARY VALUE)
     // =========================================================================
@@ -221,5 +246,41 @@ class PartTransactionServiceTest {
         });
 
         assertTrue(ex.getMessage().contains("lớn hơn 0"), "Phải chặn số lượng nhập âm");
+    }
+
+    // =========================================================================
+    // LOẠI 4: BẢO MẬT & KIỂM SOÁT QUYỀN TRUY CẬP THEO CHỦ SỞ HỮU (OWASP A01 / S2)
+    // =========================================================================
+    @Test
+    @DisplayName("Loại 4 (Bảo mật A01 / Tiêu chí S2): Chặn xuất kho cho phiếu thuộc trung tâm khác (Kiểm soát quyền theo chủ sở hữu)")
+    void testExportPart_Error_CrossCenterOwnershipViolation() {
+        ServiceCenter otherCenter = ServiceCenter.builder()
+                .centerId(2L)
+                .centerCode("TT02")
+                .centerName("TTBH Cần Thơ")
+                .build();
+
+        Ticket crossCenterTicket = Ticket.builder()
+                .ticketId(102L)
+                .ticketCode("BH-000002/2025")
+                .serviceCenter(otherCenter) // Phiếu thuộc TT02
+                .status("DANG_XU_LY")
+                .build();
+
+        ExportTransactionRequestDTO request = ExportTransactionRequestDTO.builder()
+                .partId("PIN-IP15")
+                .ticketId("BH-000002/2025")
+                .quantity(1)
+                .performedBy("ktv_trong")
+                .build();
+
+        when(ticketReadOnlyRepository.findByTicketCode("BH-000002/2025")).thenReturn(Optional.of(crossCenterTicket));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            transactionService.exportPart(1L, request); // KTV ở TT01 cố xuất linh kiện cho phiếu của TT02
+        });
+
+        assertTrue(ex.getMessage().contains("không thuộc quyền quản lý"), "Phải từ chối phiếu thuộc trung tâm khác theo OWASP A01");
+        verify(partStockRepository, never()).findByCenterIdAndPartCodeForUpdate(anyLong(), anyString());
     }
 }
