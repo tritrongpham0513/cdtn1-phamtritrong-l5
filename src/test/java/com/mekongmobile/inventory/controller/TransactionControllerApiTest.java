@@ -65,7 +65,7 @@ public class TransactionControllerApiTest {
     }
 
     private String generateToken(Long userId, String username, String role) {
-        String raw = userId + ":" + username + ":" + role + ":" + System.currentTimeMillis();
+        String raw = userId + ":" + username + ":" + role + ":1:" + System.currentTimeMillis();
         return "Bearer mk_token_" + Base64.getEncoder().encodeToString(raw.getBytes());
     }
 

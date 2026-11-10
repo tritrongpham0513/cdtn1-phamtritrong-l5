@@ -20,7 +20,11 @@ class AuthTokenServiceTest {
     }
 
     private String generateToken(Long userId, String username, String role) {
-        String raw = userId + ":" + username + ":" + role + ":" + System.currentTimeMillis();
+        return generateToken(userId, username, role, 1L);
+    }
+
+    private String generateToken(Long userId, String username, String role, Long centerId) {
+        String raw = userId + ":" + username + ":" + role + ":" + centerId + ":" + System.currentTimeMillis();
         return "Bearer mk_token_" + Base64.getEncoder().encodeToString(raw.getBytes());
     }
 
@@ -81,5 +85,28 @@ class AuthTokenServiceTest {
 
         assertTrue(exception.getMessage().contains("403 Forbidden"));
         assertTrue(exception.getMessage().contains("yêu cầu đăng nhập"));
+    }
+
+    @Test
+    @DisplayName("BUG-BT3-01 (A01): X-Center-Id khác trung tâm trong token -> Ném ForbiddenException (HTTP 403)")
+    void testCenterMismatchThrowsForbidden() {
+        String ktvToken = generateToken(101L, "ktv_trong", "TECHNICIAN", 1L);
+
+        ForbiddenException exception = assertThrows(ForbiddenException.class, () -> {
+            authTokenService.requireRoleAndCenter(ktvToken, "TECHNICIAN", 4L, "Xuất kho linh kiện");
+        });
+
+        assertTrue(exception.getMessage().contains("403 Forbidden"));
+        assertTrue(exception.getMessage().contains("X-Center-Id"));
+    }
+
+    @Test
+    @DisplayName("BUG-BT3-01 (A01): X-Center-Id đúng trung tâm trong token -> Thành công")
+    void testCenterMatchPasses() {
+        String ktvToken = generateToken(101L, "ktv_trong", "TECHNICIAN", 1L);
+
+        assertDoesNotThrow(() -> {
+            authTokenService.requireRoleAndCenter(ktvToken, "TECHNICIAN", 1L, "Xuất kho linh kiện");
+        });
     }
 }

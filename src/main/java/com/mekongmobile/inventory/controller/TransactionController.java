@@ -48,7 +48,7 @@ public class TransactionController {
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @Valid @RequestBody ImportTransactionRequestDTO request
     ) {
-        authTokenService.requireRole(authHeader, "MANAGER", "Nhập kho linh kiện mới");
+        authTokenService.requireRoleAndCenter(authHeader, "MANAGER", centerId, "Nhập kho linh kiện mới");
         TransactionResponseDTO response = transactionService.importPart(centerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseDTO.ok(response));
     }
@@ -72,7 +72,7 @@ public class TransactionController {
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @Valid @RequestBody ExportTransactionRequestDTO request
     ) {
-        authTokenService.requireRole(authHeader, "TECHNICIAN", "Xuất kho linh kiện cho phiếu sửa chữa");
+        authTokenService.requireRoleAndCenter(authHeader, "TECHNICIAN", centerId, "Xuất kho linh kiện cho phiếu sửa chữa");
         TransactionResponseDTO response = transactionService.exportPart(centerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseDTO.ok(response));
     }

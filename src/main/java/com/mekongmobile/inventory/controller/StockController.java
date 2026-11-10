@@ -83,7 +83,7 @@ public class StockController {
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @Valid @RequestBody CreateStockRequestDTO request
     ) {
-        authTokenService.requireRole(authHeader, "MANAGER", "Khởi tạo bản ghi tồn kho mới");
+        authTokenService.requireRoleAndCenter(authHeader, "MANAGER", centerId, "Khởi tạo bản ghi tồn kho mới");
         StockItemDTO created = stockService.createStock(centerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseDTO.ok(created));
     }
@@ -104,7 +104,7 @@ public class StockController {
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @Valid @RequestBody UpdateThresholdRequestDTO request
     ) {
-        authTokenService.requireRole(authHeader, "MANAGER", "Điều chỉnh ngưỡng định mức tồn tối thiểu");
+        authTokenService.requireRoleAndCenter(authHeader, "MANAGER", centerId, "Điều chỉnh ngưỡng định mức tồn tối thiểu");
         StockItemDTO updated = stockAlertService.updateMinThreshold(centerId, request);
         return ResponseEntity.ok(ApiResponseDTO.ok(updated));
     }
@@ -121,7 +121,7 @@ public class StockController {
             @RequestHeader(value = "X-Center-Id", defaultValue = "1") Long centerId,
             @PathVariable("partCode") String partCode
     ) {
-        authTokenService.requireRole(authHeader, "MANAGER", "Xóa bản ghi tồn kho");
+        authTokenService.requireRoleAndCenter(authHeader, "MANAGER", centerId, "Xóa bản ghi tồn kho");
         stockService.deleteStock(centerId, partCode);
         return ResponseEntity.ok(ApiResponseDTO.ok("Xóa bản ghi tồn kho " + partCode + " thành công"));
     }

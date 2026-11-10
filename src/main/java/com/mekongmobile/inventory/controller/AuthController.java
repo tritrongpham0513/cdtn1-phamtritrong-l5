@@ -47,8 +47,8 @@ public class AuthController {
                     "Tên đăng nhập hoặc mật khẩu không chính xác. Thử lại với ktv_trong / 123456");
         }
 
-        // Tạo token cơ bản (Base64 chuỗi session)
-        String rawToken = user.userId + ":" + user.username + ":" + user.role + ":" + System.currentTimeMillis();
+        // Tạo token cơ bản (Base64 chuỗi session), có kèm centerId để chống giả mạo X-Center-Id
+        String rawToken = user.userId + ":" + user.username + ":" + user.role + ":" + user.centerId + ":" + System.currentTimeMillis();
         String token = "mk_token_" + Base64.getEncoder().encodeToString(rawToken.getBytes());
 
         LoginResponseDTO response = LoginResponseDTO.builder()
