@@ -23,7 +23,10 @@ services:
     volumes:
       - mekong_mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      # Kiểm tra qua TCP + xác thực người dùng ứng dụng.
+      # Không dùng `mysqladmin ping -h localhost` vì lệnh đó trả 0 ngay cả khi
+      # MySQL mới chỉ chạy temporary server (port 0) trong lúc khởi tạo dữ liệu.
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} -e 'SELECT 1' $${MYSQL_DATABASE} >/dev/null 2>&1"]
       interval: 5s
       timeout: 5s
       retries: 20
