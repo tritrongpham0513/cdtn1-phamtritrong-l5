@@ -299,31 +299,34 @@ Thực hiện kiểm thử thực tế trên thư mục độc lập tách rời
 ```text
 =============================================================================
 CLEAN-ROOM EXECUTION LOG - MEKONG MOBILE SMART CRM L5
-Thời điểm: 11/11/2026 (GMT+7)
+Thời điểm: 12/11/2026 01:05 (GMT+7)
 Môi trường: Windows, Docker Desktop 28.5.1, Docker Compose v2.40.3
-Nguồn chạy: bản sao working tree (chưa phải tag v1.0)
+Nguồn chạy: git clone --branch v1.0 (tag v1.0)
+Thư mục: thư mục trắng trong %TEMP%\opencode\bt3-tag-check
+Ghi chú: sau lần chạy này chỉ README được cập nhật bằng chứng;
+         mã nguồn, Dockerfile và docker-compose.yml không thay đổi.
 =============================================================================
 
 1. Hai lệnh:
    $ cp .env.example .env
    $ docker compose up -d --build --wait
 
-   Network kiem-tra-bt3_default               Created
-   Volume kiem-tra-bt3_mekong_mysql_data      Created
    Container mekong-mysql                     Started
    Container mekong-mysql                     Healthy
    Container mekong-inventory-service         Started
    Container mekong-inventory-service         Healthy
+   Thời gian build + khởi động: 42.8 giây, exit code 0
 
 2. docker compose ps:
-   mekong-mysql               mysql:8.0                        Up 37 seconds (healthy)   0.0.0.0:3307->3306/tcp
-   mekong-inventory-service   kiem-tra-bt3-inventory-service   Up 21 seconds (healthy)   0.0.0.0:8088->8080/tcp
+   mekong-mysql               mysql:8.0                        Up (healthy)   0.0.0.0:3307->3306/tcp
+   mekong-inventory-service   bt3-tag-check-inventory-service   Up (healthy)   0.0.0.0:8088->8080/tcp
 
 3. Health check:
    $ curl.exe -s http://localhost:8088/api/health
-   {"service":"inventory-service","timestamp":"<thời-điểm-chạy, GMT+7>","status":"UP","module":"L5 - Kho linh kien thay the"}
+   {"module":"L5 - Kho linh kien thay the","service":"inventory-service","timestamp":"2026-11-12T01:05:45.995575463","status":"UP"}
+   HTTP_CODE:200
 
-4. Giao diện web: HTTP 200 (truy cập tại http://localhost:8088/)
+4. Giao diện web: HTTP_CODE:200 (http://localhost:8088/)
 
 5. Dữ liệu mẫu (MySQL row counts):
    service_centers      6
@@ -336,9 +339,10 @@ Nguồn chạy: bản sao working tree (chưa phải tag v1.0)
    $ .\mvnw.cmd test
    Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
    [INFO] BUILD SUCCESS
+   [INFO] Total time:  33.076 s
 
 7. User trong container:
-   uid=100(mekonguser) gid=101(mekonggroup)
+   uid=100(mekonguser) gid=101(mekonggroup) groups=101(mekonggroup)
 ```
 
 ---
