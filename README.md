@@ -301,7 +301,7 @@ Thực hiện kiểm thử thực tế trên thư mục độc lập tách rời
 CLEAN-ROOM EXECUTION LOG - MEKONG MOBILE SMART CRM L5
 Thời điểm: 12/11/2026 01:48–01:49 (GMT+7)
 Môi trường: Windows, Docker Desktop 28.5.1, Docker Compose v2.40.3
-Nguồn chạy: git clone --branch v1.0 (tag v1.0, commit 8d17bf6)
+Nguồn chạy: git clone --branch v1.0 (tag v1.0)
 Thư mục: thư mục trắng trong %TEMP%\opencode\bt3-final-check
 Ghi chú: lần chạy đầu trước khi sửa healthcheck MySQL báo exit 1 vì
          mysqladmin ping pass nhầm ở temporary server (port 0);
