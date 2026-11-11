@@ -299,31 +299,32 @@ Thực hiện kiểm thử thực tế trên thư mục độc lập tách rời
 ```text
 =============================================================================
 CLEAN-ROOM EXECUTION LOG - MEKONG MOBILE SMART CRM L5
-Thời điểm: 12/11/2026 01:05 (GMT+7)
+Thời điểm: 12/11/2026 01:48–01:49 (GMT+7)
 Môi trường: Windows, Docker Desktop 28.5.1, Docker Compose v2.40.3
-Nguồn chạy: git clone --branch v1.0 (tag v1.0)
-Thư mục: thư mục trắng trong %TEMP%\opencode\bt3-tag-check
-Ghi chú: sau lần chạy này chỉ README được cập nhật bằng chứng;
-         mã nguồn, Dockerfile và docker-compose.yml không thay đổi.
+Nguồn chạy: git clone --branch v1.0 (tag v1.0, commit 8d17bf6)
+Thư mục: thư mục trắng trong %TEMP%\opencode\bt3-final-check
+Ghi chú: lần chạy đầu trước khi sửa healthcheck MySQL báo exit 1 vì
+         mysqladmin ping pass nhầm ở temporary server (port 0);
+         sau khi đổi healthcheck sang TCP + xác thực, lần chạy dưới đây
+         đạt exit 0 và không container nào phải restart.
 =============================================================================
 
 1. Hai lệnh:
    $ cp .env.example .env
    $ docker compose up -d --build --wait
 
-   Container mekong-mysql                     Started
    Container mekong-mysql                     Healthy
-   Container mekong-inventory-service         Started
    Container mekong-inventory-service         Healthy
-   Thời gian build + khởi động: 42.8 giây, exit code 0
+   Thời gian build + khởi động: 39.7 giây, exit code 0
+   RestartCount: app = 0, mysql = 0
 
 2. docker compose ps:
-   mekong-mysql               mysql:8.0                        Up (healthy)   0.0.0.0:3307->3306/tcp
-   mekong-inventory-service   bt3-tag-check-inventory-service   Up (healthy)   0.0.0.0:8088->8080/tcp
+   mekong-mysql               mysql:8.0                         Up (healthy)   0.0.0.0:3307->3306/tcp
+   mekong-inventory-service   bt3-final-check-inventory-service Up (healthy)   0.0.0.0:8088->8080/tcp
 
 3. Health check:
    $ curl.exe -s http://localhost:8088/api/health
-   {"module":"L5 - Kho linh kien thay the","service":"inventory-service","timestamp":"2026-11-12T01:05:45.995575463","status":"UP"}
+   {"status":"UP","timestamp":"2026-11-12T01:49:26.476595857","service":"inventory-service","module":"L5 - Kho linh kien thay the"}
    HTTP_CODE:200
 
 4. Giao diện web: HTTP_CODE:200 (http://localhost:8088/)
@@ -334,14 +335,25 @@ Ghi chú: sau lần chạy này chỉ README được cập nhật bằng chứn
    tickets              7800
    part_stock           717
    part_transactions    4954
+   users                3
 
-6. Kiểm thử tự động:
+6. Bảng users (mật khẩu băm BCrypt):
+   ktv_trong     $2a$10$   60 ký tự   TECHNICIAN   center 1
+   quanly_kho    $2a$10$   60 ký tự   MANAGER      center 1
+   ktv_cantho    $2a$10$   60 ký tự   TECHNICIAN   center 4
+   Flyway: V1 init schema = success, V2 add users table = success
+
+7. Đăng nhập:
+   quanly_kho / 123456  -> HTTP 200
+   quanly_kho / wrong   -> HTTP 409 (BUSINESS_RULE_VIOLATION)
+
+8. Kiểm thử tự động:
    $ .\mvnw.cmd test
    Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
    [INFO] BUILD SUCCESS
-   [INFO] Total time:  33.076 s
+   [INFO] Total time:  30.309 s
 
-7. User trong container:
+9. User trong container:
    uid=100(mekonguser) gid=101(mekonggroup) groups=101(mekonggroup)
 ```
 
