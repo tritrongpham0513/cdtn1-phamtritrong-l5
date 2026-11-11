@@ -113,7 +113,7 @@ Theo góp ý đánh giá Bài tập 1 và yêu cầu kỹ thuật của Buổi 1
 Mở cửa sổ dòng lệnh (PowerShell, Command Prompt hoặc Terminal) và thực hiện clone dự án:
 
 ```bash
-git clone https://github.com/tritrongpham0513/cdtn1-phamtritrong-l5.git
+git clone --branch v1.0 https://github.com/tritrongpham0513/cdtn1-phamtritrong-l5.git
 cd cdtn1-phamtritrong-l5
 ```
 
@@ -168,6 +168,7 @@ Phương án đóng gói toàn bộ hệ thống (Ứng dụng Spring Boot + CSD
 - Đã cài đặt và đang chạy **Docker Desktop** (hỗ trợ Docker Compose v2).
 - Tài nguyên tối thiểu: ~2GB RAM trống, ~2GB dung lượng ổ đĩa.
 - Cổng kết nối host mặc định: `8088` (ứng dụng web/API) và `3307` (MySQL ngoài container, tránh đụng cổng 3306 cục bộ). Cổng `8088` được chọn làm mặc định nhằm tránh dải cổng bị chặn bởi cơ chế WinNAT / Hyper-V trên Windows.
+- JDK 17+ nếu muốn chạy bộ test trên máy host (không bắt buộc cho đường Docker).
 
 #### 2. Hai lệnh khởi chạy hệ thống (2-Command Quickstart)
 
@@ -227,7 +228,7 @@ mekong-mysql               mysql:8.0                            Up (healthy)    
 mekong-inventory-service   <tên-thư-mục>-inventory-service      Up (healthy)              0.0.0.0:8088->8080/tcp
 ```
 ```json
-{"service":"inventory-service","timestamp":"2026-11-11T16:03:26.007840057","status":"UP","module":"L5 - Kho linh kien thay the"}
+{"service":"inventory-service","timestamp":"<thời-điểm-chạy, GMT+7>","status":"UP","module":"L5 - Kho linh kien thay the"}
 ```
 
 - **Bước 3: Truy cập Giao diện Web Prototype:** Mở trình duyệt tại **`http://localhost:8088/`** để tương tác với 3 màn hình nghiệp vụ (*Quản lý kho M1, Cấp phát linh kiện M2, Lịch sử giao dịch M3*).
@@ -277,7 +278,7 @@ mekong-inventory-service   <tên-thư-mục>-inventory-service      Up (healthy)
   - *Nguyên nhân:* Hệ điều hành Windows với dịch vụ WinNAT / Hyper-V có thể tự động dự trữ ngẫu nhiên một số dải cổng TCP (kiểm tra bằng lệnh `netsh interface ipv4 show excludedportrange protocol=tcp`).
   - *Cách xử lý:* Mở tệp `.env`, sửa cổng dự phòng `APP_PORT=18080` (hoặc `APP_PORT=8080`), sau đó chạy lại:
     ```bash
-    docker compose up -d
+    docker compose up -d --wait
     ```
     Hệ thống sẽ chuyển sang phục vụ tại `http://localhost:18080/`.
 - **Sự cố 2: Docker daemon không phản hồi:**
@@ -320,7 +321,7 @@ Nguồn chạy: bản sao working tree (chưa phải tag v1.0)
 
 3. Health check:
    $ curl.exe -s http://localhost:8088/api/health
-   {"service":"inventory-service","timestamp":"2026-11-11T16:03:26.007840057","status":"UP","module":"L5 - Kho linh kien thay the"}
+   {"service":"inventory-service","timestamp":"<thời-điểm-chạy, GMT+7>","status":"UP","module":"L5 - Kho linh kien thay the"}
 
 4. Giao diện web: HTTP 200 (truy cập tại http://localhost:8088/)
 
@@ -540,6 +541,9 @@ cdtn1-phamtritrong-l5/
 │   ├── architecture-thuc-te.md       # Báo cáo kiến trúc 4 tầng thực tế
 │   ├── kientruc.drawio               # Sơ đồ kiến trúc thực tế dạng thanh chuyển tầng
 │   ├── api-contract.md               # Đặc tả hợp đồng API REST/JSON
+│   ├── api-docs/                     # Đặc tả REST API 17 endpoint × 7 mục (Thành phần 6)
+│   ├── deployment-guide.md           # Hướng dẫn triển khai tiếng Anh chuẩn 5 mục (Thành phần 5)
+│   ├── checklist-bao-mat.md          # Checklist bảo mật 7 mục theo OWASP Top 10 (Thành phần 5)
 │   └── images/bt2/                   # 8 ảnh chụp màn hình minh chứng nghiệm thu kỹ thuật
 ├── migrations/                       # Kịch bản Flyway Database Migration
 │   └── V1__init_schema.sql           # DDL tạo 5 bảng chuẩn 3NF, CHECK constraints & chỉ mục NFR
@@ -597,3 +601,5 @@ cdtn1-phamtritrong-l5/
 - [x] **Thành phần 2 (Test Report):** Hoàn thành [`docs/test-report.md`](docs/test-report.md) báo cáo trung thực kết quả thực tế 12/12 PASS, bảng kết quả 8 cột và phân tích rủi ro.
 - [x] **Thành phần 3 (Bug Log):** Hoàn thành [`docs/bug-log.md`](docs/bug-log.md) ghi nhận 3 lỗi bảo mật có thật (SEC-01, SEC-02, SEC-03) kèm commit khắc phục và kịch bản tái lập.
 - [x] **Thành phần 4 (Gói đóng gói prototype):** Dockerfile đa tầng non-root (`mekonguser`), Docker Compose v2, healthcheck UP, tài liệu hóa hướng dẫn 2 lệnh và xử lý sự cố.
+- [x] **Thành phần 5 (Deployment Guide):** Hoàn thành [`docs/deployment-guide.md`](docs/deployment-guide.md) viết hoàn toàn bằng tiếng Anh, chuẩn 5 mục bắt buộc kèm Troubleshooting.
+- [x] **Thành phần 5 (Checklist bảo mật):** Hoàn thành [`docs/checklist-bao-mat.md`](docs/checklist-bao-mat.md) rà soát trung thực 7 mục OWASP Top 10 kèm minh chứng thật.
