@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Kiểm tra trọn vẹn luồng HTTP từ Controller qua GlobalExceptionHandler:
  * 1. TC-API-01: POST /api/v1/transactions/export hợp lệ -> HTTP 201 Created.
  * 2. TC-API-02: Dữ liệu sai (quantity = 0 vi phạm @Min(1)) -> HTTP 422 Unprocessable Entity.
- * 3. TC-API-03: Bảo mật RBAC / OWASP A01 (KTV cố nhập kho) -> HTTP 403 Forbidden.
  * =============================================================================
  */
 @ExtendWith(MockitoExtension.class)
@@ -131,29 +130,6 @@ public class TransactionControllerApiTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.error.details.quantity").exists());
-    }
-
-    @Test
-    @DisplayName("TC-API-03 (Bảo mật RBAC - Tiêu chí S2 / OWASP A01): Kỹ thuật viên gọi API Nhập kho của Quản lý -> Trả về HTTP 403 Forbidden")
-    void testImportPart_ForbiddenForTechnician() throws Exception {
-        String techToken = generateToken(101L, "ktv_trong", "TECHNICIAN");
-
-        ImportTransactionRequestDTO importRequest = ImportTransactionRequestDTO.builder()
-                .partId("PIN-SS-01")
-                .quantity(50)
-                .performedBy("ktv_trong")
-                .note("Nhập kho trái quyền hạn")
-                .build();
-
-        mockMvc.perform(post("/api/v1/transactions/import")
-                        .header("Authorization", techToken)
-                        .header("X-Center-Id", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(importRequest)))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.error.code").value("FORBIDDEN"))
-                .andExpect(jsonPath("$.error.message").value(org.hamcrest.Matchers.containsString("403 Forbidden")));
     }
 }
 

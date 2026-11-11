@@ -7,8 +7,8 @@
 - **Track chuyên ngành:** Kỹ thuật phần mềm (SE)
 - **Học phần:** Chuyên đề tốt nghiệp 1 (HK1, 2026–2027) — Khoa CNTT, Đại học Văn Lang
 - **Giảng viên hướng dẫn:** TS. Nguyễn Trí Hải
-- **Tiến độ hiện tại:** Hoàn tất Giai đoạn 2 — **Buổi 12** (Nghiệm thu toàn bộ Module cốt lõi và Release `v0.2`)
-- **Phiên bản release:** `v0.2` (Tag: `v0.2`)
+- **Tiến độ hiện tại:** Hoàn tất Bài tập 3 (BT3) — Kiểm thử và Đóng gói prototype — Release **v1.0**
+- **Phiên bản release:** `v1.0` (Tag: `v1.0`)
 - **Repository:** [https://github.com/tritrongpham0513/cdtn1-phamtritrong-l5](https://github.com/tritrongpham0513/cdtn1-phamtritrong-l5)
 
 ---
@@ -26,7 +26,7 @@ Hệ thống ứng dụng kỹ thuật **Khóa bi quan (`SELECT ... FOR UPDATE` 
 - **Frontend Prototype:** HTML5, CSS3 hiện đại, Vanilla JavaScript (ES6+), FontAwesome / Lucide Icons. Kiến trúc gọi API tách lớp riêng biệt ([`api.js`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/src/main/resources/static/js/api.js) và [`app.js`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/src/main/resources/static/js/app.js)), tích hợp đầy đủ xử lý tập trung 3 trạng thái giao diện: *Đang tải (Loading skeleton/spinner), Rỗng (Empty State có nút xóa bộ lọc), và Lỗi kết nối (Error State với banner cảnh báo và nút thử lại ngay)*.
 - **Backend:** Java 17 LTS, Spring Boot 3.2.5, Spring Data JPA, Hibernate ORM, Flyway Migration. Kiến trúc phân tầng sạch (Clean Architecture) tách biệt nghiêm ngặt: `controller/` (REST API & DTO mapping) ↔ `service/` (100% nghiệp vụ thuần túy, hoàn toàn không phụ thuộc HTTP) ↔ `repository/` (Spring Data JPA truy xuất CSDL, hỗ trợ Khóa bi quan `PESSIMISTIC_WRITE`).
 - **Cơ sở dữ liệu:** MySQL 8.0 (triển khai production/Docker) kết hợp H2 In-Memory Database (môi trường kiểm thử và chạy local độc lập). Lược đồ 5 bảng chuẩn 3NF: `service_centers`, `parts`, `tickets` (Read-only từ L2/L4), `part_stock`, `part_transactions`.
-- **Kiểm thử tự động:** JUnit 5, Mockito, MockMvc, H2 In-Memory. 32 kịch bản kiểm thử tự động (27 Unit + 2 Integration + 3 API) bao phủ trọn vẹn mô hình Kim tự tháp: Unit test nghiệp vụ (Happy path, Boundary, Negative data, RBAC và Chủ sở hữu dữ liệu S2), Integration test tính tái lập Seeder (C8) và export/import end-to-end trên H2, cùng REST API slice test (HTTP 201, 422, 403).
+- **Kiểm thử tự động:** JUnit 5, Mockito, MockMvc, H2 In-Memory. 12 kịch bản kiểm thử tự động chuẩn hóa (7 Unit + 3 Integration + 2 API) bao phủ trọn vẹn mô hình Kim tự tháp theo Đề bài Bài tập 3: Unit test nghiệp vụ (Happy path, Boundary, Negative data, và Chủ sở hữu dữ liệu OWASP A01 / S2), Integration test tính tái lập Seeder (C8), xuất/nhập kho và kiểm tra phiếu đã đóng trên H2, cùng REST API slice test (HTTP 201, 422). Lệnh chạy kiểm thử một bước duy nhất: `.\mvnw.cmd test` (Windows) hoặc `./mvnw test` (Linux) đạt 12/12 PASS 100%.
 - **Đóng gói & Triển khai:** Docker Multi-stage build (JRE Eclipse Temurin 17 non-root user `mekonguser`), Docker Compose v2 ([`docker-compose.yml`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/docker-compose.yml) khởi chạy trọn gói Backend + Database bằng 2 lệnh: `cp .env.example .env` và `docker compose up -d --build`).
 
 ---
@@ -77,7 +77,7 @@ Theo góp ý đánh giá Bài tập 1 và yêu cầu kỹ thuật của Buổi 1
    - *Vì sao:* Vượt qua phép thử tự kiểm C5: chạy lại lần thứ hai không bị lỗi trùng khóa và không nhân đôi dữ liệu.
    - *Ảnh hưởng:* `DataInitializer.java`, thư mục `seeds/`.
 10. **TD-BT2-06: Hiện thực hóa tầng Xác thực Token và Ma trận Phân quyền RBAC:**
-    - *Thay đổi gì:* Bổ sung `AuthTokenService`, ném lỗi `ForbiddenException` (HTTP 403 Forbidden theo RFC-7807) khi sai vai trò.
+    - *Thay đổi gì:* Bổ sung `AuthTokenService`, ném lỗi `ForbiddenException` (HTTP 403 Forbidden theo cấu trúc `ApiResponseDTO` thống nhất) khi sai vai trò.
     - *Vì sao:* Đáp ứng tiêu chuẩn Thành phần 3 (Track SE): KTV chỉ được xuất kho sửa chữa; Quản lý kho chỉ được nhập kho, chỉnh ngưỡng và CRUD danh mục linh kiện (QT-14).
     - *Ảnh hưởng:* `AuthTokenService.java`, `ForbiddenException.java`, `TransactionController.java`, `StockController.java`.
 11. **TD-BT2-07: Đóng gói Container hóa với Dockerfile Multi-stage và Docker Compose:**
@@ -160,87 +160,193 @@ Nếu muốn chạy trực tiếp với MySQL trên máy thật:
 
 ---
 
-### 4.4. Cách 2: Chạy toàn bộ hệ thống bằng Docker Compose (≤ 2 lệnh trọn gói)
+### 4.4. Cách 2: Chạy toàn bộ hệ thống bằng Docker Compose (≤ 2 lệnh trọn gói — Thành phần 4)
 
-Nếu máy tính đã cài đặt và đang bật **Docker Desktop**, khởi chạy toàn bộ hệ thống (Ứng dụng Spring Boot + CSDL MySQL 8.0) bằng **đúng 2 lệnh**:
+Phương án đóng gói toàn bộ hệ thống (Ứng dụng Spring Boot + CSDL MySQL 8.0) vào Docker Compose theo tiêu chí cốt lõi C1. Giảng viên hoặc người chấm có thể dựng và kiểm thử trọn gói chỉ với **đúng 2 lệnh**.
+
+#### 1. Yêu cầu môi trường (Prerequisites)
+- Đã cài đặt và đang chạy **Docker Desktop** (hỗ trợ Docker Compose v2).
+- Tài nguyên tối thiểu: ~2GB RAM trống, ~2GB dung lượng ổ đĩa.
+- Cổng kết nối host mặc định: `8088` (ứng dụng web/API) và `3307` (MySQL ngoài container, tránh đụng cổng 3306 cục bộ). Cổng `8088` được chọn làm mặc định nhằm tránh dải cổng bị chặn bởi cơ chế WinNAT / Hyper-V trên Windows.
+
+#### 2. Hai lệnh khởi chạy hệ thống (2-Command Quickstart)
+
+- **Trên Linux / macOS / Git Bash:**
+  ```bash
+  # Lệnh 1: Sao chép tệp cấu hình môi trường mẫu (mặc định đã cấu hình sẵn APP_PORT=8088)
+  cp .env.example .env
+
+  # Lệnh 2: Xây dựng image và khởi chạy toàn bộ stack (tự động đợi container đạt trạng thái Healthy)
+  docker compose up -d --build --wait
+  ```
+
+- **Trên Windows Command Prompt (`cmd.exe`):**
+  ```cmd
+  copy .env.example .env
+  docker compose up -d --build --wait
+  ```
+
+- **Trên Windows PowerShell:**
+  ```powershell
+  Copy-Item .env.example .env
+  docker compose up -d --build --wait
+  ```
+
+> [!NOTE]
+> Tham số `--wait` đảm bảo lệnh chỉ kết thúc và trả về terminal sau khi cả hai container `mekong-mysql` và `mekong-inventory-service` đều đã vượt qua healthcheck và đạt trạng thái `healthy`.
+
+#### 3. Cơ chế hoạt động tự động của hệ thống
+Hệ thống tự động thực thi chuỗi tác vụ sau khi nhận lệnh:
+1. **Khởi tạo MySQL 8.0 (`mekong-mysql`):** Kéo image `mysql:8.0`, thiết lập CSDL `mekong_crm_inventory`, gán volume lưu trữ `mekong_mysql_data`, và thực hiện healthcheck `mysqladmin ping` định kỳ 5 giây cho đến khi CSDL hoàn toàn sẵn sàng (`healthy`).
+2. **Xây dựng Dockerfile đa tầng (Multi-stage Build):**
+   - *Stage 1 (Builder):* Dùng `eclipse-temurin:17-jdk-alpine`, chuẩn hóa xuống dòng LF cho `mvnw`, tải thư viện và biên dịch gói JAR thực thi.
+   - *Stage 2 (Runtime):* Dùng `eclipse-temurin:17-jre-alpine` tối giản, tạo tài khoản người dùng bảo mật không đặc quyền `mekonguser` (`uid=100(mekonguser) gid=101(mekonggroup)`) để chạy ứng dụng (tuân thủ nguyên tắc bảo mật tối thiểu).
+3. **Đồng bộ lược đồ CSDL với Flyway Migration:** Ứng dụng chờ `mysql-db` đạt trạng thái `healthy`, sau đó tự động áp dụng bản di chuyển `V1__init_schema.sql` khởi tạo chuẩn 5 bảng, chỉ mục và ràng buộc toàn vẹn `CHECK (quantity >= 0)`.
+4. **Nạp dữ liệu hạt giống tự động (Data Seeder):** Tự động đọc và nạp 5 tệp CSV từ thư mục `seeds/` theo cơ chế đối soát và chống trùng lặp Unique Keys.
+5. **Kiểm soát sẵn sàng (Startup Readiness):** Trong thời gian nạp dữ liệu, endpoint `/api/health` trả về HTTP 503 `{"status":"STARTING"}`. Khi hoàn tất nạp dữ liệu, trạng thái chuyển sang HTTP 200 `{"status":"UP"}`, container `mekong-inventory-service` đạt trạng thái `healthy`.
+
+#### 4. Cách kiểm tra hệ thống đã chạy đúng (Checklist 5 bước)
+
+Sau khi chạy 2 lệnh trên, thực hiện kiểm tra theo bảng đối chiếu sau:
 
 ```bash
-# 1. Tạo tệp cấu hình từ mẫu (giá trị mặc định đã chạy được ngay)
-cp .env.example .env
-
-# 2. Build image và khởi chạy toàn bộ stack ở chế độ nền
-docker compose up -d --build
-```
-
-Hệ thống tự động thực hiện các tác vụ:
-1. Kéo image MySQL 8.0, cấu hình tài khoản và đợi kiểm tra sức khỏe `mysqladmin ping` thành công.
-2. Build image ứng dụng Spring Boot từ Dockerfile đa tầng (chạy user bảo mật `mekonguser`).
-3. Khởi chạy Backend, thực thi Flyway migration tạo đủ 5 bảng và nạp tự động dữ liệu hạt giống từ `seeds/`.
-4. Mở cổng `8888` sẵn sàng phục vụ tại **`http://localhost:8888/`** *(cổng host mặc định `8888` giúp tránh xung đột với các dịch vụ khác hoặc cổng 8080 bị khóa trên Windows; nếu muốn đổi về cổng `8080`, chỉ cần sửa `APP_PORT=8080` trong `.env`)*.
-
-#### Kiểm tra hệ thống đã chạy đúng
-
-```bash
-# Cả hai dịch vụ phải ở trạng thái healthy
+# Bước 1: Kiểm tra trạng thái sức khỏe container (Cả 2 phải Up (healthy))
 docker compose ps
 
-# Health check phải trả về {"status":"UP", ...}
-curl -s http://localhost:8888/api/health
+# Bước 2: Kiểm tra endpoint sức khỏe qua HTTP (Phải trả về HTTP 200 và UP)
+# (Trên Linux / macOS / Git Bash / PowerShell 7):
+curl -s http://localhost:8088/api/health
+# (Hoặc trên Windows PowerShell 5.1):
+curl.exe -s http://localhost:8088/api/health
 ```
 
-Kết quả mong đợi:
-- `mekong-mysql` → `healthy`
-- `mekong-inventory-service` → `healthy`
-- `curl` trả về JSON có `"status":"UP"` và `"service":"inventory-service"`.
-- Giao diện Web Prototype: **`http://localhost:8888/`**.
+Kết quả mong đợi từ Bước 1 & Bước 2:
+```text
+NAME                       IMAGE                                STATUS                    PORTS
+mekong-mysql               mysql:8.0                            Up (healthy)              0.0.0.0:3307->3306/tcp
+mekong-inventory-service   <tên-thư-mục>-inventory-service      Up (healthy)              0.0.0.0:8088->8080/tcp
+```
+```json
+{"service":"inventory-service","timestamp":"2026-11-11T16:03:26.007840057","status":"UP","module":"L5 - Kho linh kien thay the"}
+```
 
-- **Dừng toàn bộ hệ thống khi hoàn tất nghiệm thu:**
+- **Bước 3: Truy cập Giao diện Web Prototype:** Mở trình duyệt tại **`http://localhost:8088/`** để tương tác với 3 màn hình nghiệp vụ (*Quản lý kho M1, Cấp phát linh kiện M2, Lịch sử giao dịch M3*).
+- **Bước 4: Kiểm tra số lượng bản ghi CSDL đã nạp đủ:**
+  ```bash
+  docker compose exec mysql-db mysql -u root -proot mekong_crm_inventory -e "SELECT 'service_centers' AS tbl, COUNT(*) AS total FROM service_centers UNION ALL SELECT 'parts', COUNT(*) FROM parts UNION ALL SELECT 'tickets', COUNT(*) FROM tickets UNION ALL SELECT 'part_stock', COUNT(*) FROM part_stock UNION ALL SELECT 'part_transactions', COUNT(*) FROM part_transactions;"
+  ```
+  Số lượng chuẩn đối soát:
+  - `service_centers`: **6**
+  - `parts`: **180**
+  - `tickets`: **7,800**
+  - `part_stock`: **717**
+  - `part_transactions`: **4,954**
+- **Bước 5: Chạy kiểm thử tự động trong mã nguồn:**
+  ```powershell
+  # Trên Windows:
+  .\mvnw.cmd test
+  # Trên Linux/macOS:
+  ./mvnw test
+  ```
+  Kết quả mong đợi: **12/12 tests PASS 100%**, BUILD SUCCESS.
+
+#### 5. Lệnh quản trị vòng đời container
+
+- **Tạm dừng hệ thống (giữ nguyên dữ liệu CSDL):**
+  ```bash
+  docker compose stop
+  ```
+- **Khởi động lại hệ thống đã dừng:**
+  ```bash
+  docker compose start
+  ```
+- **Hạ toàn bộ hệ thống (giữ volume dữ liệu):**
   ```bash
   docker compose down
   ```
-
-- **Xoá sạch dữ liệu và chạy lại từ đầu (phép thử máy trắng):**
+- **Xóa sạch toàn bộ hệ thống và dữ liệu để chạy lại từ trạng thái trắng hoàn toàn:**
   ```bash
   docker compose down -v
-  docker compose up -d --build
+  docker compose up -d --build --wait
   ```
 
-#### Bằng chứng phép thử máy trắng (đã tự chạy ngày 10/11/2026)
+#### 6. Xử lý sự cố thường gặp (Troubleshooting)
 
-Thực hiện đúng các bước giảng viên sẽ làm: clone tag `v1.0` vào thư mục trống, tạo `.env` từ mẫu, dựng bằng 2 lệnh.
+- **Sự cố 1: Lỗi xung đột cổng trên Windows (WinNAT / Hyper-V Port Exclusion):**
+  - *Hiện tượng:* `Error response from daemon: Ports not available: listen tcp 0.0.0.0:8088: bind: An attempt was made to access a socket in a way forbidden by its access permissions.`
+  - *Nguyên nhân:* Hệ điều hành Windows với dịch vụ WinNAT / Hyper-V có thể tự động dự trữ ngẫu nhiên một số dải cổng TCP (kiểm tra bằng lệnh `netsh interface ipv4 show excludedportrange protocol=tcp`).
+  - *Cách xử lý:* Mở tệp `.env`, sửa cổng dự phòng `APP_PORT=18080` (hoặc `APP_PORT=8080`), sau đó chạy lại:
+    ```bash
+    docker compose up -d
+    ```
+    Hệ thống sẽ chuyển sang phục vụ tại `http://localhost:18080/`.
+- **Sự cố 2: Docker daemon không phản hồi:**
+  - *Hiện tượng:* `open //./pipe/docker_engine: The system cannot find the file specified` hoặc `Access is denied`.
+  - *Cách xử lý:* Đảm bảo ứng dụng **Docker Desktop** đã được mở và khởi động hoàn tất trước khi chạy lệnh `docker compose`.
+- **Sự cố 3: Xem nhật ký lỗi chi tiết của từng dịch vụ:**
+  ```bash
+  # Xem log ứng dụng Backend
+  docker compose logs -f inventory-service
+  # Xem log CSDL MySQL
+  docker compose logs -f mysql-db
+  ```
+
+#### 7. Bằng chứng kiểm thử máy trắng độc lập (Clean-room Execution Proof)
+
+Thực hiện kiểm thử thực tế trên thư mục độc lập tách rời khỏi môi trường phát triển:
 
 ```text
-git clone --branch v1.0 --depth 1 https://github.com/tritrongpham0513/cdtn1-phamtritrong-l5.git
-cp .env.example .env
-docker compose up -d --build
+=============================================================================
+CLEAN-ROOM EXECUTION LOG - MEKONG MOBILE SMART CRM L5
+Thời điểm: 11/11/2026 (GMT+7)
+Môi trường: Windows, Docker Desktop 28.5.1, Docker Compose v2.40.3
+Nguồn chạy: bản sao working tree (chưa phải tag v1.0)
+=============================================================================
+
+1. Hai lệnh:
+   $ cp .env.example .env
+   $ docker compose up -d --build --wait
+
+   Network kiem-tra-bt3_default               Created
+   Volume kiem-tra-bt3_mekong_mysql_data      Created
+   Container mekong-mysql                     Started
+   Container mekong-mysql                     Healthy
+   Container mekong-inventory-service         Started
+   Container mekong-inventory-service         Healthy
+
+2. docker compose ps:
+   mekong-mysql               mysql:8.0                        Up 37 seconds (healthy)   0.0.0.0:3307->3306/tcp
+   mekong-inventory-service   kiem-tra-bt3-inventory-service   Up 21 seconds (healthy)   0.0.0.0:8088->8080/tcp
+
+3. Health check:
+   $ curl.exe -s http://localhost:8088/api/health
+   {"service":"inventory-service","timestamp":"2026-11-11T16:03:26.007840057","status":"UP","module":"L5 - Kho linh kien thay the"}
+
+4. Giao diện web: HTTP 200 (truy cập tại http://localhost:8088/)
+
+5. Dữ liệu mẫu (MySQL row counts):
+   service_centers      6
+   parts                180
+   tickets              7800
+   part_stock           717
+   part_transactions    4954
+
+6. Kiểm thử tự động:
+   $ .\mvnw.cmd test
+   Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
+   [INFO] BUILD SUCCESS
+
+7. User trong container:
+   uid=100(mekonguser) gid=101(mekonggroup)
 ```
-
-Kết quả quan sát thật:
-
-```text
-23:48:41  GET /api/health -> 503 (STARTING, seeder đang nạp dữ liệu)
-23:48:51  GET /api/health -> 200 (UP)
-
-NAME                       STATUS
-mekong-mysql               Up (healthy)
-mekong-inventory-service   Up (healthy)  0.0.0.0:8888->8080/tcp
-
-service_centers      6
-parts                180
-tickets              7800
-part_stock           717
-part_transactions    4954
-```
-
-Chạy lại bộ kiểm thử trong chính thư mục clone tag `v1.0`: **32/32 PASS**, BUILD SUCCESS.
 
 ---
 
 ## 5. Hướng dẫn chạy Bộ kiểm thử (Automated Tests)
 
-*(Yêu cầu: Đã cài JDK 17+. Toàn bộ 32 kịch bản kiểm thử chạy hoàn toàn độc lập, không phụ thuộc vào dữ liệu máy cá nhân hay MySQL ngoài)*:
+*(Yêu cầu: Đã cài JDK 17+. Toàn bộ 12 kịch bản kiểm thử chạy hoàn toàn độc lập trên H2 in-memory và Mockito, không phụ thuộc vào dữ liệu máy cá nhân hay MySQL ngoài)*:
 
-Chạy toàn bộ 32 test cases bằng **MỘT lệnh duy nhất**:
+Chạy toàn bộ 12 test cases bằng **MỘT lệnh duy nhất**:
 
 - **Trên Linux / macOS:**
   ```bash
@@ -251,7 +357,7 @@ Chạy toàn bộ 32 test cases bằng **MỘT lệnh duy nhất**:
   .\mvnw.cmd test
   ```
 
-### Kết quả kiểm chứng (32/32 tests PASS 100%):
+### Kết quả kiểm chứng (12/12 tests PASS 100%):
 
 ```text
 [INFO] -------------------------------------------------------
@@ -259,64 +365,42 @@ Chạy toàn bộ 32 test cases bằng **MỘT lệnh duy nhất**:
 [INFO] -------------------------------------------------------
 [INFO] Running com.mekongmobile.inventory.config.DataInitializerIntegrationTest
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.mekongmobile.inventory.config.GlobalExceptionHandlerTest
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.mekongmobile.inventory.controller.AuthControllerTest
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.controller.TransactionControllerApiTest
-[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.mekongmobile.inventory.InventoryApplicationTests
 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.mekongmobile.inventory.service.AuthTokenServiceTest
-[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.mekongmobile.inventory.service.PartServiceTest
-[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.service.PartTransactionIntegrationTest
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.mekongmobile.inventory.service.PartTransactionServiceTest
 [INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.mekongmobile.inventory.service.StockServiceTest
-[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] Results:
 [INFO] 
-[INFO] Tests run: 32, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] BUILD SUCCESS
 ```
 
-Chi tiết 12 test case báo cáo: `docs/test-report.md`. Kế hoạch kiểm thử: `docs/test-plan.md`.
+Chi tiết kế hoạch kiểm thử: [`docs/test-plan.md`](docs/test-plan.md).  
+Báo cáo kết quả kiểm thử đầy đủ 8 cột: [`docs/test-report.md`](docs/test-report.md).
 
-Bao quát 5 loại kiểm thử theo yêu cầu BT3:
+Phân bổ 12 test cases theo 5 loại kiểm thử chuẩn Bài tập 3 (7 Unit + 3 Integration + 2 API):
 
-- **Loại 1: Luồng đúng (Happy Path / Normal Flow):**
-  - `testExportPart_Success_NormalFlow`: KTV xuất kho thành công khi tồn đủ và phiếu bảo hành ở trạng thái hợp lệ `DANG_XU_LY`, tồn kho giảm chính xác, sinh giao dịch `EXPORT`.
-  - `testManagerCanImport`: Quản lý kho thực hiện giao dịch Nhập kho linh kiện mới từ NCC thành công.
-  - `testTechnicianCanExport`: Kỹ thuật viên thực hiện xuất kho linh kiện sửa chữa thành công.
-  - `createPart_Success` (CRUD Entity 1): Thêm mới linh kiện vào danh mục chuẩn hóa thành công.
-  - `getPartByCode_Success` & `updatePart_Success`: Đọc chi tiết và cập nhật thông tin linh kiện thành công.
-- **Loại 2: Giá trị biên (Boundary Conditions):**
-  - `testExportPart_Boundary_ExactStockQuantity`: Xuất số lượng đúng bằng toàn bộ tồn kho hiện tại (`quantity == stock -> stock = 0`), tồn về đúng 0 mà không bị âm, tự động kích hoạt cờ cảnh báo tồn thấp `isLowStock = true`.
-  - `testPartStockLowStockAlert`: Kiểm ngưỡng tồn thấp tại biên 5/4 — tồn 5 bằng ngưỡng không cảnh báo, tồn 4 dưới ngưỡng cảnh báo.
-- **Loại 3: Dữ liệu sai & Ràng buộc bảo mật (Invalid Data & RBAC):**
-  - `testExportPart_Error_OverStockAttempt`: Cố tình xuất vượt tồn kho (`quantity > stock`) $\rightarrow$ Bị từ chối ngay lập tức, ném ngoại lệ rõ ràng, số tồn kho giữ nguyên (QT-09 & NFR-02).
-  - `testExportPart_Error_InvalidTicketStatus`: Từ chối xuất linh kiện cho Phiếu bảo hành đã đóng (`DA_DONG`) (QT-06).
-  - `testImportPart_Error_InvalidQuantityNegative`: Chặn nhập kho với số lượng âm hoặc bằng 0 ($\le 0$) (Tiêu chí C7).
-  - `createPart_DuplicateCode_ThrowsException`: Từ chối tạo linh kiện khi mã đã tồn tại.
-  - `testTechnicianCannotImport`: Kỹ thuật viên cố tình Nhập kho $\rightarrow$ Bị chặn với lỗi `ForbiddenException` (HTTP 403 Forbidden theo QT-14).
-  - `testManagerCannotExport`: Quản lý kho cố tình Xuất kho thay KTV $\rightarrow$ Bị chặn với lỗi `ForbiddenException` (HTTP 403 Forbidden theo QT-14).
-  - `testMissingTokenThrowsForbidden`: Không truyền token $\rightarrow$ Bị từ chối HTTP 403 yêu cầu đăng nhập.
-- **Loại 4: Bảo mật theo chủ sở hữu (OWASP A01 / S2):**
-  - `testExportPart_Error_CrossCenterOwnershipViolation`: KTV TT01 không được xuất linh kiện cho phiếu thuộc TT02.
-  - `testImportPart_ForbiddenForTechnician`: TECHNICIAN gọi API nhập kho của Quản lý $\rightarrow$ HTTP 403.
-  - `testCenterMismatchThrowsForbidden` / `testCenterMatchPasses`: Header `X-Center-Id` phải khớp trung tâm trong token; lệch trung tâm $\rightarrow$ HTTP 403 (test hồi quy BUG-BT3-01).
-- **Loại 5: Tính tái lập (C8):**
-  - `testSeeder_RunTwice_DoesNotDuplicateData`: Seeder chạy lần 2 không lỗi và không nhân đôi dữ liệu trên H2.
-- **Integration end-to-end:** `testExportThenImport_EndToEnd_PersistsStockAndLedger` — xuất 4 rồi nhập 20, tồn 10 → 6 → 26, sổ cái đủ 2 bản ghi.
-- **API slice:** `TransactionControllerApiTest` — kiểm HTTP 201, 422 và 403 qua MockMvc.
-- **Test hồi quy Bug Log BT3:**
-  - `testGetCurrentUser_ReturnsIdentityFromToken`: `/api/v1/auth/me` trả đúng `username/role/centerId` từ token, không hard-code `ktv_trong` (BUG-BT3-02).
-  - `testGenericException_DoesNotLeakInternalDetails`: Phản hồi 500 không chứa tên bảng, chuỗi kết nối hay địa chỉ máy chủ (BUG-BT3-03, tiêu chí S4).
+- **Loại 1: Luồng đúng (Happy Path / Normal Flow — 5 tests):**
+  - `TC-01 / testExportPart_Success_NormalFlow`: KTV xuất kho thành công khi tồn đủ và phiếu bảo hành ở trạng thái hợp lệ `DANG_XU_LY` (QT-06, QT-09), tồn kho giảm chính xác, sinh giao dịch `EXPORT`.
+  - `TC-02 / testImportPart_Success_NormalFlow`: Quản lý kho nhập kho thành công (US-02), tồn tăng chính xác và ghi sổ cái append-only `part_transactions`.
+  - `TC-03 / testPartStock_LowStockAlert_US05`: Kiểm tra logic cảnh báo tồn thấp (US-05) tại các mức tồn 4 (< 5 -> cảnh báo), 5 (== 5 -> không cảnh báo), 10 (> 5 -> không cảnh báo).
+  - `TC-09 / testExportThenImport_EndToEnd_PersistsStockAndLedger`: Integration test xuất và nhập kho end-to-end trên CSDL H2 thật, tồn 10 → 6 → 26, sổ cái lưu đúng 2 bản ghi.
+  - `TC-11 / testExportPart_ApiSuccess`: API slice test xuất kho qua MockMvc, trả về HTTP 201 Created và cấu trúc envelope `ApiResponseDTO`.
+- **Loại 2: Giá trị biên (Boundary Conditions — 2 tests):**
+  - `TC-04 / testExportPart_Boundary_ExactStockQuantity`: Xuất số lượng đúng bằng toàn bộ tồn kho hiện tại (`quantity == 10/10`), tồn về đúng 0 mà không bị âm, tự động kích hoạt cờ cảnh báo tồn thấp `isLowStock = true` (0 < 5).
+  - `TC-05 / testExportPart_Error_OverStockAttempt`: Cố tình xuất vượt tồn 1 đơn vị (`quantity == 11/10`) $\rightarrow$ Bị từ chối ngay lập tức với `IllegalStateException`, tồn giữ nguyên 10, không ghi sổ cái.
+- **Loại 3: Dữ liệu sai (Invalid Data — 3 tests):**
+  - `TC-06 / testExportPart_Error_InvalidTicketStatus`: Unit test từ chối xuất linh kiện cho Phiếu bảo hành đã đóng (`DA_DONG`), ném exception chứa `DA_DONG` và không khóa tồn (QT-06).
+  - `TC-10 / testExportPart_InvalidTicketStatus_DA_DONG_ThrowsException`: Integration test trên CSDL H2 thật từ chối xuất cho phiếu `DA_DONG`, ném ngoại lệ rõ ràng và xác nhận sổ cái không phát sinh bản ghi giao dịch rác nào.
+  - `TC-12 / testExportPart_ValidationError_ZeroQuantity`: Gửi request xuất kho với `quantity = 0` (vi phạm `@Min(1)`) $\rightarrow$ API trả về HTTP 422 Unprocessable Entity, `VALIDATION_ERROR` và chi tiết lỗi trường `quantity`.
+- **Loại 4: Bảo mật & Phân quyền (Security / OWASP A01 / S2 — 1 test):**
+  - `TC-07 / testExportPart_Error_CrossCenterOwnershipViolation`: KTV thuộc TT01 cố tình xuất linh kiện cho phiếu thuộc TT02 $\rightarrow$ Bị từ chối với `IllegalArgumentException` chứa "không thuộc quyền quản lý" (OWASP A01 / S2).
+- **Loại 5: Tính tái lập (Reproducibility / C8 — 1 test):**
+  - `TC-08 / testSeeder_RunTwice_DoesNotDuplicateData`: Seeder chạy lần 2 trên CSDL H2 thật không ném ngoại lệ và không nhân đôi dữ liệu (số lượng bản ghi 5 bảng giữ nguyên 100%).
 
 ---
 
@@ -404,7 +488,7 @@ Mở các tệp trong gói [`com.mekongmobile.inventory.service`](file:///d:/chu
 - **0** import `jakarta.servlet.*` hay `org.springframework.http.*`.
 - **0** sự xuất hiện của `HttpServletRequest`, `HttpServletResponse`, hoặc `ResponseEntity`.
 - **0** mã trạng thái HTTP (`200`, `400`, `403`, `404`, `500`).
-- Mọi lỗi nghiệp vụ đều ném ngoại lệ miền thuần túy (`BusinessRuleException`, `ResourceNotFoundException`, `ForbiddenException`). Toàn bộ việc ánh xạ sang HTTP status codes chuẩn RFC-7807 được cách ly hoàn toàn tại [`GlobalExceptionHandler.java`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/src/main/java/com/mekongmobile/inventory/config/GlobalExceptionHandler.java) trong tầng Controller.
+- Mọi lỗi nghiệp vụ đều ném ngoại lệ miền thuần túy (`BusinessRuleException`, `ResourceNotFoundException`, `ForbiddenException`). Toàn bộ việc ánh xạ sang HTTP status codes và định dạng phong bì `ApiResponseDTO` thống nhất được cách ly hoàn toàn tại [`GlobalExceptionHandler.java`](file:///d:/chuyen-de-tot-nghiep-01/cdtn1-phamtritrong-l5/src/main/java/com/mekongmobile/inventory/config/GlobalExceptionHandler.java) trong tầng Controller.
 
 ---
 
@@ -482,7 +566,7 @@ cdtn1-phamtritrong-l5/
 │   │       ├── application.properties # Cấu hình chung của ứng dụng
 │   │       ├── application-dev.properties # Cấu hình môi trường MySQL
 │   │       └── application-local.properties # Cấu hình môi trường H2 In-Memory chạy ngay
-│   └── test/                         # Bộ kiểm thử tự động 32 test cases (JUnit 5 + Mockito + MockMvc + H2)
+│   └── test/                         # Bộ kiểm thử tự động 12 test cases (JUnit 5 + Mockito + MockMvc + H2)
 ├── .dockerignore                     # Loại trừ file thừa khi đóng gói Docker
 ├── .env.example                      # Biến môi trường mẫu đầy đủ
 ├── .gitignore                        # Loại trừ .env thật, thư mục target/ và file tạm
@@ -496,20 +580,20 @@ cdtn1-phamtritrong-l5/
 
 ---
 
-## 9. Checklist tiến độ (Nghiệm thu Buổi 12 — Release v0.2)
+## 9. Nghiệm thu Bài tập 3 — Release v1.0
 
-- [x] **Tiêu chí C1 (Cốt lõi):** Hệ thống clone về chạy được theo đúng README bằng lệnh `./mvnw spring-boot:run -Dspring-boot.run.profiles=local` hoặc chuỗi `cp .env.example .env` + `docker compose up -d --build`, không cần bất kỳ can thiệp thủ công nào.
-- [x] **Tiêu chí C2 (Cốt lõi):** Phân tầng sạch sẽ, đúng trách nhiệm: `controller/` $\rightarrow$ `service/` $\rightarrow$ `repository/`, không gọi chéo sai chiều.
-- [x] **Tiêu chí C3 (Nghiệp vụ thật):** Hiện thực đầy đủ $\ge 2$ quy tắc nghiệp vụ thật:
+- [x] **Tiêu chí C1 (Gói đóng gói chạy được bằng ≤ 2 lệnh — Thành phần 4):** Khởi chạy trọn vẹn toàn bộ hệ thống bằng 2 lệnh `cp .env.example .env` (hoặc `copy` trên Windows) và `docker compose up -d --build`. Kiểm thử độc lập clean-room xác nhận 100% container `healthy`, nạp đủ 5 bảng CSDL và phản hồi HTTP 200 `UP`.
+- [x] **Tiêu chí C2 (Phân tầng sạch sẽ):** Kiến trúc phân tầng nghiêm ngặt `controller/` $\rightarrow$ `service/` $\rightarrow$ `repository/`, không phụ thuộc ngược chiều.
+- [x] **Tiêu chí C3 (Nghiệp vụ thật):** Hiện thực đầy đủ các quy tắc cốt lõi:
   - Khóa bi quan chống xuất âm kho đồng thời (`SELECT ... FOR UPDATE` theo QT-09 & NFR-02).
-  - Kiểm soát xuất linh kiện gắn chặt với vòng đời phiếu bảo hành (`DANG_XU_LY` theo QT-06).
-  - Phân quyền nghiêm ngặt theo vai trò RBAC (KTV xuất kho, QLK nhập kho theo QT-14).
-- [x] **Tiêu chí C4 (Kiểm thử tự động):** 32/32 test cases PASS 100% bằng đúng một lệnh `./mvnw test`, bao phủ trọn vẹn mô hình kim tự tháp: Luồng đúng, Giá trị biên, Dữ liệu sai, Tính tái lập C8, RBAC và Chủ sở hữu dữ liệu S2 (27 unit + 2 integration + 3 API).
-- [x] **Tiêu chí C5 (Tính Idempotent):** Chạy lại lần thứ hai không bị lỗi trùng khóa và không nhân đôi dữ liệu nhờ cơ chế Unique Keys trong `DataInitializer.java`.
-- [x] **Tiêu chí C6 (Quản lý cấu hình):** Khóa phiên bản phụ thuộc trong `pom.xml`, khai báo đầy đủ biến môi trường tại `.env.example`, `.env` thật được `.gitignore` bảo vệ tuyệt đối.
-- [x] **Tiêu chí C7 (Xử lý lỗi):** Dữ liệu vào không hợp lệ được từ chối an toàn với thông báo lỗi chuẩn RFC-7807 qua `GlobalExceptionHandler`, không làm sập ứng dụng.
-- [x] **Tiêu chí S1 (CRUD Track SE):** Đầy đủ 4 thao tác Tạo – Đọc – Sửa – Xóa cho 2 thực thể cốt lõi (`Part` và `PartStock`).
-- [x] **Tiêu chí S2 (Service Clean Track SE):** 100% các tệp trong tầng `service/` không chứa dấu vết HTTP (`req`, `res`, `ResponseEntity`, mã HTTP).
-- [x] **Tiêu chí S3 (Migration & Seeder Track SE):** Tự động Migrate từ CSDL trống bằng Flyway (`V1__init_schema.sql`) và Seeder tự nạp 5 file CSV từ `seeds/`.
-- [x] **Tiêu chí S4 (Frontend Prototype Track SE):** Giao diện 3 màn hình nghiệp vụ kết nối REST API thật, xử lý tập trung đủ 3 trạng thái (*Loading, Empty có nút xóa lọc, Error có nút thử lại*).
-- [x] **Thành phần 4 Mức đánh giá cao (Bonus):** Đóng gói Dockerfile đa tầng và `docker-compose.yml` khởi chạy toàn bộ hệ thống bằng 2 lệnh, cả hai dịch vụ có healthcheck và dữ liệu mẫu nạp tự động.
+  - Kiểm soát xuất kho gắn chặt với vòng đời phiếu bảo hành (`DANG_XU_LY` theo QT-06).
+  - Phân quyền theo vai trò RBAC (KTV xuất kho, QLK nhập kho theo QT-14).
+  - Sổ cái bất biến Append-only (`part_transactions` theo NFR-04).
+- [x] **Tiêu chí C4 (Kiểm thử tự động — Thành phần 1 & 2):** Đúng **12/12 test cases PASS 100%** bằng một lệnh `.\mvnw.cmd test` (hoặc `./mvnw test`), phân tầng chuẩn 7 Unit + 3 Integration + 2 API, bao phủ đủ 5 loại kiểm thử BT3.
+- [x] **Tiêu chí C5 & C8 (Tính Idempotent & Tái lập Seeder):** Seeder chạy nhiều lần không trùng khóa, không nhân đôi dữ liệu nhờ cơ chế Unique Keys; kiểm chứng tự động qua `TC-08 / testSeeder_RunTwice_DoesNotDuplicateData`.
+- [x] **Tiêu chí C6 (Quản lý cấu hình):** Khóa phiên bản phụ thuộc trong `pom.xml`, khai báo biến môi trường chuẩn trong `.env.example`, `.env` được bảo vệ bởi `.gitignore` và `.dockerignore`.
+- [x] **Tiêu chí C7 (Xử lý lỗi):** Dữ liệu không hợp lệ được từ chối an toàn với cấu trúc lỗi phong bì `ApiResponseDTO` thống nhất qua `GlobalExceptionHandler`, không làm sập ứng dụng.
+- [x] **Thành phần 1 (Test Plan rút gọn):** Hoàn thành [`docs/test-plan.md`](docs/test-plan.md) chuẩn hóa phạm vi 12 test case, tiêu chí chấp nhận và ma trận phân bổ.
+- [x] **Thành phần 2 (Test Report):** Hoàn thành [`docs/test-report.md`](docs/test-report.md) báo cáo trung thực kết quả thực tế 12/12 PASS, bảng kết quả 8 cột và phân tích rủi ro.
+- [x] **Thành phần 3 (Bug Log):** Hoàn thành [`docs/bug-log.md`](docs/bug-log.md) ghi nhận 3 lỗi bảo mật có thật (SEC-01, SEC-02, SEC-03) kèm commit khắc phục và kịch bản tái lập.
+- [x] **Thành phần 4 (Gói đóng gói prototype):** Dockerfile đa tầng non-root (`mekonguser`), Docker Compose v2, healthcheck UP, tài liệu hóa hướng dẫn 2 lệnh và xử lý sự cố.

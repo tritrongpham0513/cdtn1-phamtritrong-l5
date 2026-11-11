@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * =============================================================================
@@ -122,5 +124,58 @@ class PartTransactionIntegrationTest {
         assertEquals(26, stock.getQuantity(), "Tồn kho phải tăng từ 6 lên 26");
         assertEquals(2, partTransactionRepository.count(),
                 "Sổ cái phải có đủ bản ghi EXPORT và IMPORT");
+    }
+
+    @Test
+    @DisplayName("TC-INT-03 (Dữ liệu sai): Từ chối xuất linh kiện cho phiếu đã đóng DA_DONG trên CSDL H2")
+    void testExportPart_InvalidTicketStatus_DA_DONG_ThrowsException() {
+        ServiceCenter center = serviceCenterRepository.save(ServiceCenter.builder()
+                .centerCode("TT-INT-02")
+                .centerName("TTBH Integration Test 2")
+                .address("Quận 3, TP.HCM")
+                .phone("028.3999.0002")
+                .isActive(true)
+                .build());
+
+        Part part = partRepository.save(Part.builder()
+                .partCode("PIN-INT-02")
+                .partName("Pin Integration Test 2")
+                .category("PIN")
+                .unit("Cái")
+                .unitPrice(new BigDecimal("180000"))
+                .isActive(true)
+                .build());
+
+        partStockRepository.save(PartStock.builder()
+                .serviceCenter(center)
+                .part(part)
+                .quantity(10)
+                .minThreshold(5)
+                .build());
+
+        Ticket closedTicket = ticketReadOnlyRepository.save(Ticket.builder()
+                .ticketCode("BH-INT-0002/2026")
+                .serviceCenter(center)
+                .status("DA_DONG")
+                .customerName("Khách hàng Phiếu Đã Đóng")
+                .deviceModel("iPhone 15")
+                .build());
+
+        ExportTransactionRequestDTO exportRequest = ExportTransactionRequestDTO.builder()
+                .ticketId(closedTicket.getTicketCode())
+                .partId(part.getPartCode())
+                .quantity(1)
+                .performedBy("ktv_integration")
+                .note("Cố tình xuất cho phiếu đã đóng")
+                .build();
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+                transactionService.exportPart(center.getCenterId(), exportRequest)
+        );
+
+        assertTrue(ex.getMessage().contains("DA_DONG"),
+                "Thông báo ngoại lệ phải chỉ rõ trạng thái DA_DONG");
+        assertEquals(0, partTransactionRepository.count(),
+                "Không được phát sinh bản ghi giao dịch nào trong sổ cái khi bị từ chối");
     }
 }

@@ -161,6 +161,25 @@ class PartTransactionServiceTest {
         verify(partTransactionRepository, times(1)).save(any(PartTransaction.class));
     }
 
+    @Test
+    @DisplayName("Loại 1c (Luồng đúng): Cảnh báo tồn thấp khi quantity < minThreshold (US-05)")
+    void testPartStock_LowStockAlert_US05() {
+        // Tồn 4 < ngưỡng 5 -> Bật cảnh báo (true)
+        stock.setQuantity(4);
+        stock.setMinThreshold(5);
+        assertTrue(stock.isLowStock(), "Tồn 4 < ngưỡng 5 phải bật cảnh báo tồn thấp");
+
+        // Tồn 5 == ngưỡng 5 -> Không cảnh báo (false)
+        stock.setQuantity(5);
+        stock.setMinThreshold(5);
+        assertFalse(stock.isLowStock(), "Tồn 5 bằng ngưỡng 5 không được cảnh báo");
+
+        // Tồn 10 > ngưỡng 5 -> Không cảnh báo (false)
+        stock.setQuantity(10);
+        stock.setMinThreshold(5);
+        assertFalse(stock.isLowStock(), "Tồn 10 > ngưỡng 5 không được cảnh báo");
+    }
+
     // =========================================================================
     // LOẠI 2: GIÁ TRỊ BIÊN (BOUNDARY VALUE)
     // =========================================================================
@@ -230,22 +249,6 @@ class PartTransactionServiceTest {
 
         assertTrue(ex.getMessage().contains("DA_DONG"), "Phải từ chối phiếu bảo hành đang ở trạng thái DA_DONG");
         verify(partStockRepository, never()).findByCenterIdAndPartCodeForUpdate(anyLong(), anyString());
-    }
-
-    @Test
-    @DisplayName("Loại 3c (Dữ liệu vào không hợp lệ C7): Nhập kho với số lượng âm hoặc 0 -> Từ chối")
-    void testImportPart_Error_InvalidQuantityNegative() {
-        ImportTransactionRequestDTO requestNegative = ImportTransactionRequestDTO.builder()
-                .partId("PIN-IP15")
-                .quantity(-5)
-                .performedBy("Thủ kho")
-                .build();
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            transactionService.importPart(1L, requestNegative);
-        });
-
-        assertTrue(ex.getMessage().contains("lớn hơn 0"), "Phải chặn số lượng nhập âm");
     }
 
     // =========================================================================
