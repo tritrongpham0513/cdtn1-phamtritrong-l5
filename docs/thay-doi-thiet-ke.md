@@ -133,3 +133,10 @@
 - **Thay đổi gì:** Thêm entity `User`, `UserRepository`, bean `BCryptPasswordEncoder` trong `SecurityConfig`, migration `V2__add_users_table.sql` (bảng `users`, 3 tài khoản demo với `password_hash` BCrypt cost 10) và `seedUsers()` idempotent trong `DataInitializer`. `AuthController` bỏ hằng `MOCK_USERS` plaintext, đọc tài khoản từ CSDL và đối chiếu bằng `passwordEncoder.matches()`.
 - **Vì sao:** Trước khi sửa, mật khẩu `123456` nằm dạng plaintext ngay trong mã nguồn và CSDL không có bảng `users`, nên không đạt tiêu chí S3 (OWASP A04/A07). Sau khi sửa, kể cả đọc trực tiếp bảng `users` cũng không suy ra được mật khẩu gốc.
 - **Ảnh hưởng tới thành phần nào:** `pom.xml`, `entity/User.java`, `repository/UserRepository.java`, `config/SecurityConfig.java`, `controller/AuthController.java`, `config/DataInitializer.java`, `migrations/V2__add_users_table.sql`, `docs/checklist-bao-mat.md`, `docs/api-docs/README.md`, `docs/deployment-guide.md`.
+
+---
+
+### TD-BT3-07: Healthcheck MySQL kiểm tra qua TCP để tránh báo `healthy` sớm (phép thử máy trắng C1)
+- **Thay đổi gì:** Đổi healthcheck của service `mysql-db` từ `mysqladmin ping -h localhost` sang `mysql -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'SELECT 1' $MYSQL_DATABASE`; bổ sung `spring.flyway.connect-retries=10` và `connect-retries-interval=3s` trong `application-dev.properties`.
+- **Vì sao:** Khi dựng lại từ thư mục trắng, `mysqladmin ping -h localhost` trả mã 0 ngay cả lúc MySQL mới chạy *temporary server* (port 0, chỉ mở socket) trong giai đoạn khởi tạo. Docker Compose vì thế đánh dấu MySQL `healthy` và khởi động ứng dụng, nhưng ngay sau đó temporary server dừng để chuyển sang server chính thức; ứng dụng kết nối bị `Connection refused` và container phải restart. Lần chạy đầu trả `UP_EXIT=1` dù cuối cùng hệ thống vẫn lên — không đạt yêu cầu "2 lệnh, không cần hỏi".
+- **Ảnh hưởng tới thành phần nào:** `docker-compose.yml`, `src/main/resources/application-dev.properties`, `README.md`, `docs/ai-disclosure.md`.

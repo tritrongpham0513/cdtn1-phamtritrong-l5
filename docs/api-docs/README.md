@@ -6,7 +6,7 @@
 - **Institution:** Van Lang University
 - **Instructor:** Dr. Nguyen Tri Hai
 - **Specification Version:** v1.0
-- **Git Commit:** `3b08107` (code baseline); release tag `v1.0`
+- **Git Commit:** `c689ec1` (code baseline); release tag `v1.0`
 - **Date:** November 2026
 - **Base URL:** `http://localhost:8088`
 - **Container Port:** `8080` (mapped to host port `8088`)
