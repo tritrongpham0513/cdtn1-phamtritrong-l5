@@ -1,7 +1,7 @@
 # Checklist Bảo mật 7 mục — OWASP Top 10:2025 (BT3)
 
 - **Ngày chạy kiểm chứng:** 12/11/2026
-- **Commit kiểm chứng:** `32ac1f8` (commit mã nguồn); tag `v1.0` trỏ commit đóng gói tài liệu cuối cùng
+- **Commit kiểm chứng:** `3b08107` (commit mã nguồn); tag `v1.0` trỏ commit đóng gói tài liệu cuối cùng
 - **Môi trường thực thi:** Docker Desktop 28.5.1, Docker Compose v2.40.3-desktop.1, Windows 11 Host
 - **Cam kết tính trung thực:** Mọi minh chứng dưới đây được chạy thật trong phiên này.
 

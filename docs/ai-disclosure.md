@@ -5,7 +5,7 @@
 > **Chuyên ngành (Track):** Kỹ thuật Phần mềm (Software Engineering - SE)  
 > **Luồng nghiệp vụ:** L5 – Kho linh kiện thay thế (Mekong Mobile Smart CRM)  
 > **Bài tập:** Bài tập 3 – Kiểm thử và Đóng gói prototype  
-> **Phiên bản:** Release Tag `v1.0` (commit mã nguồn kiểm chứng `32ac1f8`)  
+> **Phiên bản:** Release Tag `v1.0` (commit mã nguồn kiểm chứng `3b08107`)  
 > **Ngày cập nhật:** 12/11/2026  
 
 ---
