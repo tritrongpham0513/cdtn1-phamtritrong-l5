@@ -5,7 +5,7 @@
 > **Sinh viên thực hiện:** Phạm Trí Trọng — MSSV: 2374802010525 (Track SE)  
 > **Phạm vi tài liệu:** Ghi nhận và theo dõi 03 lỗi (01 CRITICAL + 02 MAJOR) phát hiện trong quá trình kiểm thử bảo mật của giai đoạn BT3; cả 03 lỗi đã được khắc phục triệt để với commit độc lập.  
 > **Kết quả xác nhận kiểm thử tự động:** `.\mvnw.cmd test` → **12/12 test PASS (100%)**, 0 failures, 0 errors, 0 skipped, BUILD SUCCESS.  
-> **Môi trường thực thi lệnh kiểm thử:** Các lệnh cURL mẫu bên dưới sử dụng cổng backend cục bộ `http://localhost:8080` (khi chạy `.\mvnw.cmd spring-boot:run`). Trường hợp chạy ứng dụng qua Docker Compose, cổng tương ứng là `http://localhost:8888`.  
+> **Môi trường thực thi lệnh kiểm thử:** Các lệnh cURL mẫu bên dưới sử dụng cổng backend cục bộ `http://localhost:8080` (khi chạy `.\mvnw.cmd spring-boot:run`). Trường hợp chạy ứng dụng qua Docker Compose, cổng tương ứng là `http://localhost:8088`.  
 > **Lưu ý về shell thực thi lệnh cURL:** Các lệnh cURL mẫu bên dưới chạy trực tiếp trong Git Bash, WSL, hoặc dùng `curl.exe` trên PowerShell 7 với chuỗi JSON đặt trong dấu nháy đơn, ví dụ: `-d '{"username":"ktv_trong","password":"123456"}'` (nhằm tránh xung đột với alias `Invoke-WebRequest` trên Windows PowerShell 5 cũ).
 
 ---

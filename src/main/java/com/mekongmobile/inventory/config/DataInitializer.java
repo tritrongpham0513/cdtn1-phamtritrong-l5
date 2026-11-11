@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,8 @@ public class DataInitializer implements CommandLineRunner {
     private final TicketReadOnlyRepository ticketReadOnlyRepository;
     private final PartStockRepository partStockRepository;
     private final PartTransactionRepository partTransactionRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.seed.path:seeds}")
     private String seedPath;
@@ -64,6 +67,9 @@ public class DataInitializer implements CommandLineRunner {
         // 1. Nạp danh mục Trung tâm bảo hành từ service_centers.csv
         Map<Long, ServiceCenter> centerMap = loadServiceCenters();
 
+        // 1b. Nạp tài khoản demo với mật khẩu băm BCrypt (chỉ khi bảng users còn trống)
+        seedUsers();
+
         // 2. Nạp danh mục Linh kiện từ parts.csv
         Map<Long, Part> partMap = loadParts();
 
@@ -80,6 +86,50 @@ public class DataInitializer implements CommandLineRunner {
         reconcileStockQuantities(centerMap, partMap);
 
         log.info("========== [FLYWAY & DATA SEEDER] HOÀN TẤT THÀNH CÔNG ==========");
+    }
+
+    /**
+     * 1b. Nạp tài khoản demo nếu bảng users còn trống.
+     * Trên MySQL/Flyway, V2__add_users_table.sql đã nạp sẵn nên bước này bỏ qua.
+     * Trên H2/local (Flyway tắt), bước này tạo tài khoản với mật khẩu băm BCrypt.
+     */
+    private void seedUsers() {
+        if (userRepository.count() > 0) {
+            log.info("[Seeder] Bảng users đã có {} tài khoản, không nạp lại", userRepository.count());
+            return;
+        }
+
+        List<User> users = List.of(
+                User.builder()
+                        .username("ktv_trong")
+                        .passwordHash(passwordEncoder.encode("123456"))
+                        .fullName("Phạm Trí Trọng")
+                        .role("TECHNICIAN")
+                        .centerId(1L)
+                        .centerName("TT01 — TTBH Quận 10 (TP.HCM)")
+                        .isActive(true)
+                        .build(),
+                User.builder()
+                        .username("quanly_kho")
+                        .passwordHash(passwordEncoder.encode("123456"))
+                        .fullName("Quản Lý Kho")
+                        .role("MANAGER")
+                        .centerId(1L)
+                        .centerName("TT01 — TTBH Quận 10 (TP.HCM)")
+                        .isActive(true)
+                        .build(),
+                User.builder()
+                        .username("ktv_cantho")
+                        .passwordHash(passwordEncoder.encode("123456"))
+                        .fullName("Lê Văn Cần Thơ")
+                        .role("TECHNICIAN")
+                        .centerId(4L)
+                        .centerName("TT04 — TTBH Ninh Kiều (Cần Thơ)")
+                        .isActive(true)
+                        .build());
+
+        userRepository.saveAll(users);
+        log.info("[Seeder] Đã nạp {} tài khoản demo với mật khẩu băm BCrypt", users.size());
     }
 
     /**

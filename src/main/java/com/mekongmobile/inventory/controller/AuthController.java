@@ -3,20 +3,23 @@ package com.mekongmobile.inventory.controller;
 import com.mekongmobile.inventory.dto.request.LoginRequestDTO;
 import com.mekongmobile.inventory.dto.response.ApiResponseDTO;
 import com.mekongmobile.inventory.dto.response.LoginResponseDTO;
+import com.mekongmobile.inventory.entity.User;
 import com.mekongmobile.inventory.exception.BusinessRuleException;
 import com.mekongmobile.inventory.exception.ForbiddenException;
+import com.mekongmobile.inventory.repository.UserRepository;
 import com.mekongmobile.inventory.service.AuthTokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
-import java.util.Map;
 
 /**
- * Controller xử lý xác thực đăng nhập ở mức cơ bản
- * Đáp ứng tiêu chuẩn Thành phần 3 (Track SE): "xác thực đăng nhập ở mức cơ bản"
+ * Controller xử lý xác thực đăng nhập ở mức cơ bản.
+ * Mật khẩu được đối chiếu với hash BCrypt lưu trong bảng users (Tiêu chí S3),
+ * không còn lưu mật khẩu plaintext trong mã nguồn.
  */
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -24,19 +27,12 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthTokenService authTokenService;
-
-    private static final Map<String, UserProfile> MOCK_USERS = Map.of(
-            "ktv_trong",
-            new UserProfile(101L, "ktv_trong", "123456", "Phạm Trí Trọng", "TECHNICIAN", 1L,
-                    "TT01 — TTBH Quận 10 (TP.HCM)"),
-            "quanly_kho",
-            new UserProfile(102L, "quanly_kho", "123456", "Quản Lý Kho", "MANAGER", 1L, "TT01 — TTBH Quận 10 (TP.HCM)"),
-            "ktv_cantho", new UserProfile(103L, "ktv_cantho", "123456", "Lê Văn Cần Thơ", "TECHNICIAN", 4L,
-                    "TT04 — TTBH Ninh Kiều (Cần Thơ)"));
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Endpoint đăng nhập cơ bản
-     * Endpoint: POST http://localhost:8080/api/v1/auth/login
+     * Endpoint: POST http://localhost:8088/api/v1/auth/login
      * Body mẫu:
      * {
      * "username": "ktv_trong",
@@ -46,24 +42,25 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO request) {
         String username = request.getUsername().trim().toLowerCase();
-        UserProfile user = MOCK_USERS.get(username);
+        User user = userRepository.findByUsernameIgnoreCase(username).orElse(null);
 
-        if (user == null || !user.password.equals(request.getPassword())) {
+        if (user == null || !Boolean.TRUE.equals(user.getIsActive())
+                || !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new BusinessRuleException(
                     "Tên đăng nhập hoặc mật khẩu không chính xác. Thử lại với ktv_trong / 123456");
         }
 
         // Tạo token cơ bản (Base64 chuỗi session), có kèm centerId để chống giả mạo X-Center-Id
-        String rawToken = user.userId + ":" + user.username + ":" + user.role + ":" + user.centerId + ":" + System.currentTimeMillis();
+        String rawToken = user.getUserId() + ":" + user.getUsername() + ":" + user.getRole() + ":" + user.getCenterId() + ":" + System.currentTimeMillis();
         String token = "mk_token_" + Base64.getEncoder().encodeToString(rawToken.getBytes());
 
         LoginResponseDTO response = LoginResponseDTO.builder()
-                .userId(user.userId)
-                .username(user.username)
-                .fullName(user.fullName)
-                .role(user.role)
-                .centerId(user.centerId)
-                .centerName(user.centerName)
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .centerId(user.getCenterId())
+                .centerName(user.getCenterName())
                 .token(token)
                 .build();
 
@@ -72,7 +69,7 @@ public class AuthController {
 
     /**
      * Endpoint kiểm tra thông tin phiên làm việc hiện tại
-     * Endpoint: GET http://localhost:8080/api/v1/auth/me
+     * Endpoint: GET http://localhost:8088/api/v1/auth/me
      */
     @GetMapping("/me")
     public ResponseEntity<ApiResponseDTO<LoginResponseDTO>> getCurrentUser(
@@ -82,31 +79,21 @@ public class AuthController {
             throw new ForbiddenException("Từ chối truy cập (403 Forbidden): Chưa đăng nhập hoặc token không hợp lệ.");
         }
 
-        UserProfile user = MOCK_USERS.get(principal.username().toLowerCase());
-        if (user == null) {
+        User user = userRepository.findByUsernameIgnoreCase(principal.username()).orElse(null);
+        if (user == null || !Boolean.TRUE.equals(user.getIsActive())) {
             throw new ForbiddenException("Từ chối truy cập (403 Forbidden): Tài khoản trong token không tồn tại.");
         }
 
         LoginResponseDTO response = LoginResponseDTO.builder()
-                .userId(user.userId)
-                .username(user.username)
-                .fullName(user.fullName)
-                .role(user.role)
-                .centerId(user.centerId)
-                .centerName(user.centerName)
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .centerId(user.getCenterId())
+                .centerName(user.getCenterName())
                 .token(authHeader.substring(7))
                 .build();
 
         return ResponseEntity.ok(ApiResponseDTO.ok(response));
-    }
-
-    private record UserProfile(
-            Long userId,
-            String username,
-            String password,
-            String fullName,
-            String role,
-            Long centerId,
-            String centerName) {
     }
 }

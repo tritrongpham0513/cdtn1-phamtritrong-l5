@@ -16,6 +16,12 @@
 
 ## 1. API Overview & Endpoint Index
 
+#### Interactive Swagger UI & OpenAPI Specification
+In addition to this Markdown documentation, an interactive Swagger UI explorer and standard OpenAPI 3.0 specification files are provided in this directory:
+- **Interactive Swagger UI (Browser):** [`index.html`](index.html) — Open directly in any modern web browser or serve statically to interactively test all 17 endpoints against `http://localhost:8088`. Includes pre-inlined OpenAPI specifications to avoid local CORS restrictions under `file://` execution.
+- **OpenAPI 3.0 Specification (JSON):** [`swagger.json`](swagger.json) — Full OpenAPI 3.0.3 specification in JSON format, ready for direct import into Postman, Insomnia, or Swagger Editor.
+- **OpenAPI 3.0 Specification (YAML):** [`openapi.yaml`](openapi.yaml) — Standard OpenAPI 3.0.3 definition in YAML format.
+
 This specification documents all 17 REST operations implemented in Module L5 across five controllers (`AuthController`, `HealthController`, `PartController`, `StockController`, `TransactionController`). All operations use `http://localhost:8088` as their base path.
 
 | # | HTTP Method | Path | Authentication | Required Role / Scope | Description |
@@ -61,7 +67,7 @@ Envelope attributes:
 - `error` (object, conditional): Error envelope populated exclusively when `success` is `false`. Contains:
   - `code` (string): Standard machine-readable classification code.
   - `message` (string): Human-readable error explanation.
-  - `details` (object, optional): Map of `fieldName -> validationMessage` describing each constraint failure (e.g. `{"quantity":"Số lượng nhập phải là số nguyên dương > 0"}`).
+  - `details` (object, optional): Map of `fieldName -> validationMessage` describing each constraint failure (e.g. `{"quantity":"Quantity must be a positive integer > 0"}`).
 - `timestamp` (string, mandatory): ISO-8601 formatted server timestamp.
 
 #### 2.2 Jackson Serialization Rule (`NON_NULL`)
@@ -98,7 +104,7 @@ The API utilizes a custom error envelope and does **not** adhere to RFC-7807 (Pr
 - **Base URL:** `http://localhost:8088`
 
 #### 2. Business Description
-Authenticates user credentials against the in-memory demo account catalog. Upon successful verification, generates and returns a session Bearer token containing user identity, role, and assigned service center ID.
+Authenticates user credentials against the `users` table. Passwords are stored as BCrypt hashes (`$2a$10$...`), and the server verifies the submitted password with `BCryptPasswordEncoder.matches()`. Upon successful verification, generates and returns a session Bearer token containing user identity, role, and assigned service center ID.
 
 #### 3. Authentication & Authorization
 - **Requirement:** Public (No authentication required)
@@ -127,15 +133,15 @@ curl.exe -X POST "http://localhost:8088/api/v1/auth/login" \
 {
   "success": true,
   "data": {
-    "userId": 102,
+    "userId": 2,
     "username": "quanly_kho",
     "fullName": "Qu\u1ea3n L\u00fd Kho",
     "role": "MANAGER",
     "centerId": 1,
     "centerName": "TT01 \u2014 TTBH Qu\u1eadn 10 (TP.HCM)",
-    "token": "mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUjoxOjE3OTQ0MTg1MDg3MTY="
+    "token": "mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMTk4MTEw"
   },
-  "timestamp": "2026-11-12T00:35:08.716739692"
+  "timestamp": "2026-11-12T01:36:38.115193824"
 }
 ```
 
@@ -147,8 +153,8 @@ curl.exe -X POST "http://localhost:8088/api/v1/auth/login" \
 | 500 Internal Server Error | `INTERNAL_SERVER_ERROR` | Malformed JSON body |
 
 #### 7. Limitations & Implementation Notes
-- Authentication is an in-memory mock implementation managed by `AuthTokenService`.
-- No database table `users` exists in MySQL.
+- Credentials are stored in the MySQL `users` table; `password_hash` is a BCrypt hash (cost 10), never plaintext.
+- Demo accounts are seeded by Flyway `V2__add_users_table.sql` (MySQL) or by `DataInitializer` on H2/local profiles.
 - Token format is `mk_token_<base64(userId:username:role:centerId:timestamp)>` without cryptographic signing.
 
 ---
@@ -1180,7 +1186,7 @@ curl.exe -s -X GET "http://localhost:8088/api/v1/tickets/TK-2026-001/parts"
 
 ## 4. Known Limitations & Architectural Constraints
 
-1. **In-Memory Mock Authentication:** Authentication is implemented in-memory via `AuthTokenService` and `AuthController`. No persistent `users` table exists in the database schema. Tokens are Base64-encoded strings (`mk_token_<base64>`) without cryptographic signatures or server-side session stores. Hardcoded accounts are provided for demonstration and grading.
+1. **Base64 Bearer Tokens:** Credentials are stored as BCrypt hashes in the `users` table, but session tokens are still Base64-encoded strings (`mk_token_<base64>`) without cryptographic signatures or server-side session stores. There is no logout/revocation endpoint, so a leaked token remains usable until the client discards it.
 2. **Unauthenticated Read Operations:** Read-only endpoints (`GET /api/v1/parts`, `GET /api/v1/stock`, `GET /api/v1/transactions`, and `GET /api/v1/tickets/{ticketId}/parts`) do not validate credentials or authorization headers.
 3. **Default Center ID Fallback:** The `X-Center-Id` header defaults to `1` when omitted by clients. In a multi-tenant or multi-center deployment, clients failing to specify this header will silently access Center 1 data.
 4. **Malformed JSON Handling:** Malformed JSON request bodies cause `HttpMessageNotReadableException`, which is caught by the general exception handler and returns HTTP 500 `INTERNAL_SERVER_ERROR` instead of standard HTTP 400 `BAD_REQUEST`.

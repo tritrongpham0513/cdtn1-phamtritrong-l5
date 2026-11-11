@@ -439,7 +439,7 @@ curl -X DELETE http://localhost:8080/api/v1/parts/PIN-IP-15
 curl -X POST http://localhost:8080/api/v1/stock \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
-  -H "Authorization: Bearer mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUg==" \
+  -H "Authorization: Bearer mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMjQ4MDcy" \
   -d '{"partCode":"PIN-IP-15","initialQuantity":20,"minThreshold":5}'
 
 # 2. Tra cứu danh sách tồn kho và chi tiết (Read - GET)
@@ -450,13 +450,13 @@ curl -H "X-Center-Id: 1" http://localhost:8080/api/v1/stock/PIN-IP-15
 curl -X PUT http://localhost:8080/api/v1/stock/threshold \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
-  -H "Authorization: Bearer mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUg==" \
+  -H "Authorization: Bearer mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMjQ4MDcy" \
   -d '{"partCode":"PIN-IP-15","minThreshold":8}'
 
 # 4. Xóa bản ghi tồn kho khi số lượng tồn bằng 0 (Delete - DELETE)
 curl -X DELETE http://localhost:8080/api/v1/stock/PIN-IP-15 \
   -H "X-Center-Id: 1" \
-  -H "Authorization: Bearer mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUg=="
+  -H "Authorization: Bearer mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMjQ4MDcy"
 ```
 
 #### C. Kiểm chứng 2 Quy tắc nghiệp vụ thật:
@@ -467,7 +467,7 @@ curl -X DELETE http://localhost:8080/api/v1/stock/PIN-IP-15 \
 curl -X POST http://localhost:8080/api/v1/transactions/export \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
-  -H "Authorization: Bearer mk_token_MTAxOmt0dl90cm9uZzpURUNITklDSUFO" \
+  -H "Authorization: Bearer mk_token_MTprdHZfdHJvbmc6VEVDSE5JQ0lBTjoxOjE3OTQ0MjIyNDc5MTM=" \
   -d '{"ticketId":"BH-000022/2025","partId":"MH-AP-01","quantity":999,"performedBy":"KTV - Phạm Trí Trọng"}'
 
 # Quy tắc 2 (QT-06): Từ chối xuất cho Phiếu bảo hành đã đóng hoặc không tồn tại
@@ -475,7 +475,7 @@ curl -X POST http://localhost:8080/api/v1/transactions/export \
 curl -X POST http://localhost:8080/api/v1/transactions/export \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
-  -H "Authorization: Bearer mk_token_MTAxOmt0dl90cm9uZzpURUNITklDSUFO" \
+  -H "Authorization: Bearer mk_token_MTprdHZfdHJvbmc6VEVDSE5JQ0lBTjoxOjE3OTQ0MjIyNDc5MTM=" \
   -d '{"ticketId":"BH-999999/2026","partId":"MH-AP-01","quantity":1,"performedBy":"KTV - Phạm Trí Trọng"}'
 
 # Quy tắc bổ sung (QT-14 & RBAC): Kỹ thuật viên cố tình thực hiện thao tác Nhập kho
@@ -483,7 +483,7 @@ curl -X POST http://localhost:8080/api/v1/transactions/export \
 curl -X POST http://localhost:8080/api/v1/transactions/import \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
-  -H "Authorization: Bearer mk_token_MTAxOmt0dl90cm9uZzpURUNITklDSUFO" \
+  -H "Authorization: Bearer mk_token_MTprdHZfdHJvbmc6VEVDSE5JQ0lBTjoxOjE3OTQ0MjIyNDc5MTM=" \
   -d '{"partId":"MH-AP-01","quantity":10,"performedBy":"ktv_trong"}'
 ```
 

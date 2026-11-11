@@ -1,5 +1,10 @@
 # API Contract – Kho linh kiện thay thế (L5)
 
+> ⚠️ **TÀI LIỆU NÀY ĐÃ ĐƯỢC THAY THẾ (DEPRECATED).**
+> Bản đặc tả API chính thức dùng để chấm Bài tập 3 là [`docs/api-docs/README.md`](api-docs/README.md)
+> (17 endpoint, tiếng Anh, kèm request/response thật). Tệp này chỉ còn giá trị lịch sử từ giai đoạn thiết kế BT2,
+> một số đường dẫn và cổng bên dưới đã lỗi thời — **không dùng để kiểm thử**.
+
 > **Dự án:** Smart CRM – Mekong Mobile  
 > **Luồng nghiệp vụ:** L5 – Kho linh kiện thay thế  
 > **Sinh viên:** Phạm Trí Trọng – MSSV: 2374802010525 – Track SE  

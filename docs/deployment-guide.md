@@ -86,7 +86,7 @@ docker compose exec -T mysql-db mysql -uspringstudent -pspringstudent mekong_crm
 - `part_stock`: 717
 - `part_transactions`: 4954
 
-**Demo Accounts (In-memory mock in AuthController):**
+**Demo Accounts (seeded in `users` with BCrypt hashes):**
 
 | Username | Password | Role | Center ID |
 | :--- | :--- | :--- | :---: |
@@ -94,7 +94,7 @@ docker compose exec -T mysql-db mysql -uspringstudent -pspringstudent mekong_crm
 | `quanly_kho` | `123456` | `MANAGER` | 1 |
 | `ktv_cantho` | `123456` | `TECHNICIAN` | 4 |
 
-Hardcoded mock accounts for evaluation. No `users` table exists.
+Passwords are stored only as BCrypt hashes (`$2a$10$...`, 60 chars); plaintext `123456` is listed here solely for grading.
 
 ---
 

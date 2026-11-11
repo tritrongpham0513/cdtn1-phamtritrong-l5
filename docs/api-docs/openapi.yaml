@@ -1,0 +1,1395 @@
+openapi: 3.0.3
+info:
+  title: "Mekong Mobile Smart CRM — Module L5 (Replacement Parts Inventory Management)"
+  description: "Official interactive OpenAPI 3.0 specification for Module L5 prototype. Details all 17 REST endpoints implemented in Spring Boot 3 across Authentication, Service Health, Parts Master Catalog, Center Stock Management, and Immutable Inventory Transactions."
+  version: 1.0.0
+  contact:
+    name: "Pham Tri Trong (MSSV: 2374802010525)"
+    email: 2374802010525@vanlanguni.vn
+servers:
+  - url: "http://localhost:8088"
+    description: "Local Docker Compose Service (Host Port 8088 -> Container Port 8080)"
+tags:
+  - name: Authentication
+    description: "In-memory mock authentication and session profile endpoints"
+  - name: Health
+    description: "Application health check and readiness probe"
+  - name: "Parts Catalog"
+    description: "Standardized master spare parts catalog management (CRUD)"
+  - name: "Stock Management"
+    description: "Service center inventory balance, safety thresholds, and cleanup"
+  - name: Transactions
+    description: "Inbound shipments (import), warranty repairs (export), and ledger query"
+paths:
+  "/api/v1/auth/login":
+    post:
+      tags:
+        - Authentication
+      summary: "Authenticate user and issue mock session token"
+      description: "Validates credentials against in-memory mock user directory. Returns user profile and a session Bearer token."
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/LoginRequestDTO"
+            examples:
+              managerLogin:
+                summary: "Warehouse Manager Login"
+                value:
+                  username: quanly_kho
+                  password: 123456
+              technicianLogin:
+                summary: "Service Center 1 Technician Login"
+                value:
+                  username: ktv_trong
+                  password: 123456
+      responses:
+        200:
+          description: "Authentication successful"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LoginApiResponse"
+              example:
+                success: true
+                data:
+                  userId: 102
+                  username: quanly_kho
+                  fullName: "Quan Ly Kho"
+                  role: MANAGER
+                  centerId: 1
+                  centerName: "TT01 - TTBH Quan 10 (TP.HCM)"
+                  token: "mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUjoxOjE3OTQ0MTg1MDg3MTY="
+                timestamp: "2026-11-12T00:35:08.716739692"
+        403:
+          description: "Invalid credentials"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+              example:
+                success: false
+                error:
+                  code: FORBIDDEN
+                  message: "Sai ten dang nhap hoac mat khau"
+                timestamp: "2026-11-12T00:35:08.720"
+        422:
+          description: "Validation error on required fields"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/auth/me":
+    get:
+      tags:
+        - Authentication
+      summary: "Get current user profile from session token"
+      description: "Decodes the Bearer token passed in the Authorization header and returns user profile."
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "User profile retrieved successfully"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LoginApiResponse"
+              example:
+                success: true
+                data:
+                  userId: 102
+                  username: quanly_kho
+                  fullName: "Quan Ly Kho"
+                  role: MANAGER
+                  centerId: 1
+                  centerName: "TT01 - TTBH Quan 10 (TP.HCM)"
+                  token: "mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUjoxOjE3OTQ0MTg1MDg3MTY="
+                timestamp: "2026-11-12T00:35:08.740385599"
+        403:
+          description: "Missing or invalid Bearer token"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/health":
+    get:
+      tags:
+        - Health
+      summary: "Service health and readiness check"
+      description: "Returns UP when application, database, and seeds have loaded completely. Returns 503 during startup."
+      operationId: healthCheck
+      responses:
+        200:
+          description: "Application is healthy and ready"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/HealthResponse"
+              example:
+                status: UP
+                service: inventory-service
+                module: "L5 - Kho linh kien thay the"
+                timestamp: "2026-11-12T00:35:08.745762591"
+        503:
+          description: "Application is still starting or seeding"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/HealthResponse"
+  "/api/v1/parts":
+    post:
+      tags:
+        - "Parts Catalog"
+      summary: "Register new spare part into catalog"
+      description: "Creates a new spare part record in the master catalog. partCode must be unique."
+      operationId: createPart
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/CreatePartRequestDTO"
+            example:
+              partCode: PART-API-01
+              partName: "OLED Display Assembly"
+              category: SCREEN
+              unit: Piece
+              unitPrice: 1250000
+      responses:
+        201:
+          description: "Part created successfully"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/PartApiResponse"
+              example:
+                success: true
+                data:
+                  partId: 187
+                  partCode: PART-API-01
+                  partName: "OLED Display Assembly"
+                  category: SCREEN
+                  unit: Piece
+                  unitPrice: 1250000
+                  isActive: true
+                  createdAt: "2026-11-12T00:35:08.755963039"
+                timestamp: "2026-11-12T00:35:08.771146932"
+        409:
+          description: "Part code already exists"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        422:
+          description: "Validation error on part fields"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+    get:
+      tags:
+        - "Parts Catalog"
+      summary: "List parts with pagination and filters"
+      description: "Retrieves a paginated list of active spare parts matching optional keyword and category filters."
+      operationId: getAllParts
+      parameters:
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          description: "Search keyword matching partCode or partName"
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: "Filter by exact category code"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: "Page number (1-based)"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+          description: "Page size"
+      responses:
+        200:
+          description: "Paginated parts retrieved"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/PartListApiResponse"
+              example:
+                success: true
+                data:
+                  - partId: 70
+                    partCode: CAM-AP-01
+                    partName: "Camera sau Apple loai 1"
+                    category: CAMERA
+                    unit: Cai
+                    unitPrice: 420000
+                    isActive: true
+                    createdAt: "2026-11-12T00:20:50"
+                  - partId: 71
+                    partCode: CAM-AP-02
+                    partName: "Camera sau Apple loai 2"
+                    category: CAMERA
+                    unit: Cai
+                    unitPrice: 420000
+                    isActive: true
+                    createdAt: "2026-11-12T00:20:50"
+                meta:
+                  page: 1
+                  limit: 2
+                  total: 187
+                  totalPages: 94
+                timestamp: "2026-11-12T00:35:08.784349505"
+  "/api/v1/parts/{partCode}":
+    get:
+      tags:
+        - "Parts Catalog"
+      summary: "Get single part by unique part code"
+      description: "Retrieves part specifications and pricing by partCode string identifier."
+      operationId: getPartByCode
+      parameters:
+        - name: partCode
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Unique part SKU code"
+      responses:
+        200:
+          description: "Part found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/PartApiResponse"
+              example:
+                success: true
+                data:
+                  partId: 187
+                  partCode: PART-API-01
+                  partName: "OLED Display Assembly"
+                  category: SCREEN
+                  unit: Piece
+                  unitPrice: 1250000
+                  isActive: true
+                  createdAt: "2026-11-12T00:35:09"
+                timestamp: "2026-11-12T00:35:08.794577656"
+        404:
+          description: "Part not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+    put:
+      tags:
+        - "Parts Catalog"
+      summary: "Update part catalog metadata"
+      description: "Updates part name, category, unit, unit price, or active flag."
+      operationId: updatePart
+      parameters:
+        - name: partCode
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Unique part SKU code"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/UpdatePartRequestDTO"
+            example:
+              partName: "OLED Display Assembly V2"
+              category: SCREEN
+              unit: Piece
+              unitPrice: 1300000
+              isActive: true
+      responses:
+        200:
+          description: "Part updated successfully"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/PartApiResponse"
+              example:
+                success: true
+                data:
+                  partId: 187
+                  partCode: PART-API-01
+                  partName: "OLED Display Assembly V2"
+                  category: SCREEN
+                  unit: Piece
+                  unitPrice: 1300000
+                  isActive: true
+                  createdAt: "2026-11-12T00:35:09"
+                timestamp: "2026-11-12T00:35:08.813817896"
+        404:
+          description: "Part code not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        422:
+          description: "Validation failure"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+    delete:
+      tags:
+        - "Parts Catalog"
+      summary: "Soft delete part from catalog"
+      description: "Sets isActive = false. The part row is preserved in MySQL to maintain referential integrity."
+      operationId: deletePart
+      parameters:
+        - name: partCode
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Unique part SKU code"
+      responses:
+        200:
+          description: "Part deactivated successfully"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/StringApiResponse"
+              example:
+                success: true
+                data: "Xoa linh kien PART-API-01 thanh cong"
+                timestamp: "2026-11-12T00:35:08.827920152"
+        404:
+          description: "Part code not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/stock":
+    get:
+      tags:
+        - "Stock Management"
+      summary: "List stock balances for service center"
+      description: "Queries inventory records for the center specified in X-Center-Id. Supports low-stock filtering."
+      operationId: getStock
+      security:
+        - centerIdHeader: []
+      parameters:
+        - name: X-Center-Id
+          in: header
+          schema:
+            type: integer
+            default: 1
+          description: "Service Center ID"
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          description: "Filter by part code or name"
+        - name: isLowStock
+          in: query
+          schema:
+            type: boolean
+          description: "Filter items below minimum safety threshold"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: "Page number"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: "Page size"
+      responses:
+        200:
+          description: "Stock records retrieved"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/StockListApiResponse"
+              example:
+                success: true
+                data:
+                  - partId: MH-SS-01
+                    partName: "Man hinh Samsung loai 1"
+                    category: MAN_HINH
+                    unit: Cai
+                    unitPrice: 2200000
+                    quantity: 25
+                    minThreshold: 12
+                    isLowStock: false
+                    updatedAt: "2026-11-12T00:30:11"
+                  - partId: MH-SS-02
+                    partName: "Man hinh Samsung loai 2"
+                    category: MAN_HINH
+                    unit: Cai
+                    unitPrice: 150000
+                    quantity: 10
+                    minThreshold: 3
+                    isLowStock: false
+                    updatedAt: "2026-11-12T00:20:56"
+                meta:
+                  page: 1
+                  limit: 2
+                  total: 125
+                  totalPages: 63
+                timestamp: "2026-11-12T00:35:08.838907475"
+    post:
+      tags:
+        - "Stock Management"
+      summary: "Initialize inventory record for part at center"
+      description: "Creates an initial part_stock row for a part at the manager's center."
+      operationId: createStock
+      security:
+        - bearerAuth: []
+        - centerIdHeader: []
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+          description: "Center ID matching token"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/CreateStockRequestDTO"
+            example:
+              partCode: PART-STK-REAL
+              initialQuantity: 25
+              minThreshold: 8
+      responses:
+        201:
+          description: "Stock record initialized"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/StockItemApiResponse"
+              example:
+                success: true
+                data:
+                  partId: PART-STK-REAL
+                  partName: "Lithium Polymer Battery 5000mAh"
+                  category: BATTERY
+                  unit: Piece
+                  unitPrice: 450000
+                  quantity: 25
+                  minThreshold: 8
+                  isLowStock: false
+                  updatedAt: "2026-11-12T00:35:47.932623989"
+                timestamp: "2026-11-12T00:35:47.93870459"
+        403:
+          description: "Unauthorized role or center mismatch"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        404:
+          description: "Part code not found in catalog"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        409:
+          description: "Stock record already exists for this part and center"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/stock/{partCode}":
+    get:
+      tags:
+        - "Stock Management"
+      summary: "Get stock balance and threshold for single part"
+      description: "Retrieves inventory status for partCode at center identified by X-Center-Id."
+      operationId: getStockByPartCode
+      security:
+        - centerIdHeader: []
+      parameters:
+        - name: partCode
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Part SKU code"
+        - name: X-Center-Id
+          in: header
+          schema:
+            type: integer
+            default: 1
+          description: "Service Center ID"
+      responses:
+        200:
+          description: "Stock record found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/StockItemApiResponse"
+              example:
+                success: true
+                data:
+                  partId: MH-SS-01
+                  partName: "Man hinh Samsung loai 1"
+                  category: MAN_HINH
+                  unit: Cai
+                  unitPrice: 2200000
+                  quantity: 25
+                  minThreshold: 12
+                  isLowStock: false
+                  updatedAt: "2026-11-12T00:30:11"
+                timestamp: "2026-11-12T00:35:08.848965751"
+        404:
+          description: "Stock record not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+    delete:
+      tags:
+        - "Stock Management"
+      summary: "Delete empty inventory record"
+      description: "Deletes a part_stock row only if current quantity is exactly zero."
+      operationId: deleteStock
+      security:
+        - bearerAuth: []
+        - centerIdHeader: []
+      parameters:
+        - name: partCode
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Part SKU code"
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+          description: "Center ID matching token"
+      responses:
+        200:
+          description: "Inventory record deleted"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/StringApiResponse"
+              example:
+                success: true
+                data: "Xoa ban ghi ton kho PART-DEL-01 thanh cong"
+                timestamp: "2026-11-12T00:35:09.004612617"
+        403:
+          description: "Role or center mismatch"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        409:
+          description: "Cannot delete inventory record with non-zero quantity"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/stock/threshold":
+    put:
+      tags:
+        - "Stock Management"
+      summary: "Adjust safety stock alert threshold"
+      description: "Updates minThreshold for a part at center and recomputes isLowStock."
+      operationId: updateThreshold
+      security:
+        - bearerAuth: []
+        - centerIdHeader: []
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+          description: "Center ID matching token"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/UpdateThresholdRequestDTO"
+            example:
+              partId: MH-SS-01
+              minThreshold: 12
+              reason: "Buffer threshold increased for Q4"
+      responses:
+        200:
+          description: "Threshold adjusted successfully"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/StockItemApiResponse"
+              example:
+                success: true
+                data:
+                  partId: MH-SS-01
+                  partName: "Man hinh Samsung loai 1"
+                  category: MAN_HINH
+                  unit: Cai
+                  unitPrice: 2200000
+                  quantity: 25
+                  minThreshold: 12
+                  isLowStock: false
+                  updatedAt: "2026-11-12T00:35:08.962080254"
+                timestamp: "2026-11-12T00:35:08.967480962"
+        403:
+          description: "Role or center mismatch"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        404:
+          description: "Stock record not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/transactions/import":
+    post:
+      tags:
+        - Transactions
+      summary: "Inbound shipment import of replacement parts"
+      description: "Increments inventory balance and appends an immutable transaction record."
+      operationId: importPart
+      security:
+        - bearerAuth: []
+        - centerIdHeader: []
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+          description: "Center ID matching token"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ImportTransactionRequestDTO"
+            example:
+              partId: MH-SS-01
+              quantity: 10
+              performedBy: quanly_kho
+              note: "Restock batch 10 units"
+      responses:
+        201:
+          description: "Import completed and recorded"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/TransactionApiResponse"
+              example:
+                success: true
+                data:
+                  transactionId: GD-NK-202611-487E
+                  transactionType: IMPORT
+                  partId: MH-SS-01
+                  partName: "Man hinh Samsung loai 1"
+                  quantity: 10
+                  remainingStock: 35
+                  isLowStock: false
+                  performedBy: quanly_kho
+                  note: "Restock batch 10 units"
+                  createdAt: "2026-11-12T00:35:09.018333671"
+                timestamp: "2026-11-12T00:35:09.025144325"
+        400:
+          description: "Invalid quantity (<= 0)"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        403:
+          description: "Role or center mismatch"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/transactions/export":
+    post:
+      tags:
+        - Transactions
+      summary: "Export part for warranty ticket with pessimistic lock"
+      description: "Deducts stock atomically using SELECT FOR UPDATE on part_stock. Validates ticket status (DANG_XU_LY or CHO_LINH_KIEN) and center ownership."
+      operationId: exportPart
+      security:
+        - bearerAuth: []
+        - centerIdHeader: []
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: integer
+          description: "Center ID matching token"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ExportTransactionRequestDTO"
+            example:
+              ticketId: TK-2026-001
+              partId: MH-SS-01
+              quantity: 1
+              performedBy: ktv_trong
+              note: "Warranty replacement for Galaxy S23"
+      responses:
+        200:
+          description: "Part exported successfully"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/TransactionApiResponse"
+              example:
+                success: true
+                data:
+                  transactionId: GD-XK-202611-63E5
+                  transactionType: EXPORT
+                  partId: MH-SS-01
+                  partName: "Man hinh Samsung loai 1"
+                  ticketId: TK-2026-001
+                  quantity: 1
+                  remainingStock: 33
+                  isLowStock: false
+                  performedBy: ktv_trong
+                  note: "Warranty replacement for Galaxy S23"
+                  createdAt: "2026-11-12T00:38:51.160805692"
+                timestamp: "2026-11-12T00:38:51.170872249"
+        400:
+          description: "Ticket does not exist or does not belong to center"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        403:
+          description: "Unauthorized role (only TECHNICIAN permitted) or center mismatch"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+        409:
+          description: "Ticket not in valid state or insufficient inventory"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorApiResponse"
+  "/api/v1/transactions":
+    get:
+      tags:
+        - Transactions
+      summary: "Query immutable transaction audit ledger"
+      description: "Retrieves paginated transactions with optional filters for partId, type (IMPORT/EXPORT), and date ranges."
+      operationId: getTransactions
+      security:
+        - centerIdHeader: []
+      parameters:
+        - name: X-Center-Id
+          in: header
+          schema:
+            type: integer
+            default: 1
+          description: "Service Center ID"
+        - name: partId
+          in: query
+          schema:
+            type: string
+          description: "Filter by part code"
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - IMPORT
+              - EXPORT
+          description: "Transaction type"
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: "Filter from date (YYYY-MM-DD)"
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: "Filter to date (YYYY-MM-DD)"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: "Page number"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+          description: "Page size"
+      responses:
+        200:
+          description: "Transaction records retrieved"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/TransactionListApiResponse"
+              example:
+                success: true
+                data:
+                  - transactionId: GD-XK-202611-63E5
+                    transactionType: EXPORT
+                    partId: MH-SS-01
+                    partName: "Man hinh Samsung loai 1"
+                    ticketId: TK-2026-001
+                    quantity: 1
+                    performedBy: ktv_trong
+                    note: "Warranty replacement for Galaxy S23"
+                    createdAt: "2026-11-12T00:38:51"
+                  - transactionId: GD-XK-202611-3C0F
+                    transactionType: EXPORT
+                    partId: MH-SS-01
+                    partName: "Man hinh Samsung loai 1"
+                    ticketId: BH-000022/2025
+                    quantity: 1
+                    performedBy: ktv_trong
+                    note: "Replaced damaged screen for ticket BH-000022/2025"
+                    createdAt: "2026-11-12T00:35:09"
+                meta:
+                  page: 1
+                  limit: 2
+                  total: 866
+                  totalPages: 433
+                timestamp: "2026-11-12T00:38:51.220193812"
+  "/api/v1/tickets/{ticketId}/parts":
+    get:
+      tags:
+        - Transactions
+      summary: "List spare parts exported for a warranty ticket"
+      description: "Retrieves list of parts consumed by ticketId. Note: ticketId cannot contain forward slashes due to URL path routing rules."
+      operationId: getPartsByTicket
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Ticket code without slashes (e.g. TK-2026-001)"
+      responses:
+        200:
+          description: "Parts list retrieved"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/TicketPartsApiResponse"
+              example:
+                success: true
+                data:
+                  - transactionId: GD-XK-202611-63E5
+                    partId: MH-SS-01
+                    partName: "Man hinh Samsung loai 1"
+                    quantity: 1
+                    performedBy: ktv_trong
+                    exportDate: "2026-11-12T00:38:51"
+                timestamp: "2026-11-12T00:38:51.209518474"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: mock-token
+      description: "In-memory session token with format 'mk_token_<base64>' issued by /api/v1/auth/login"
+    centerIdHeader:
+      type: apiKey
+      in: header
+      name: X-Center-Id
+      description: "Target Service Center ID (1 to 6, default: 1)"
+  schemas:
+    LoginRequestDTO:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: "Account username (e.g. quanly_kho or ktv_trong)"
+        password:
+          type: string
+          description: "Account password (e.g. 123456)"
+    LoginResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 102
+        username:
+          type: string
+          example: quanly_kho
+        fullName:
+          type: string
+          example: "Quan Ly Kho"
+        role:
+          type: string
+          enum:
+            - MANAGER
+            - TECHNICIAN
+          example: MANAGER
+        centerId:
+          type: integer
+          example: 1
+        centerName:
+          type: string
+          example: "TT01 - TTBH Quan 10 (TP.HCM)"
+        token:
+          type: string
+          example: "mk_token_MTAyOnF1YW5seV9raG86TUFOQUdFUjoxOjE3OTQ0MTg1MDg3MTY="
+    CreatePartRequestDTO:
+      type: object
+      required:
+        - partCode
+        - partName
+        - category
+        - unit
+        - unitPrice
+      properties:
+        partCode:
+          type: string
+          maxLength: 30
+          example: PART-API-01
+        partName:
+          type: string
+          maxLength: 150
+          example: "OLED Display Assembly"
+        category:
+          type: string
+          maxLength: 50
+          example: SCREEN
+        unit:
+          type: string
+          maxLength: 20
+          default: Piece
+          example: Piece
+        unitPrice:
+          type: number
+          minimum: 0
+          example: 1250000
+    UpdatePartRequestDTO:
+      type: object
+      required:
+        - partName
+        - category
+        - unit
+        - unitPrice
+      properties:
+        partName:
+          type: string
+          maxLength: 150
+          example: "OLED Display Assembly V2"
+        category:
+          type: string
+          maxLength: 50
+          example: SCREEN
+        unit:
+          type: string
+          maxLength: 20
+          example: Piece
+        unitPrice:
+          type: number
+          minimum: 0
+          example: 1300000
+        isActive:
+          type: boolean
+          default: true
+          example: true
+    PartResponseDTO:
+      type: object
+      properties:
+        partId:
+          type: integer
+          example: 187
+        partCode:
+          type: string
+          example: PART-API-01
+        partName:
+          type: string
+          example: "OLED Display Assembly"
+        category:
+          type: string
+          example: SCREEN
+        unit:
+          type: string
+          example: Piece
+        unitPrice:
+          type: number
+          example: 1250000
+        isActive:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-11-12T00:35:08.755963039"
+    CreateStockRequestDTO:
+      type: object
+      required:
+        - partCode
+        - initialQuantity
+        - minThreshold
+      properties:
+        partCode:
+          type: string
+          example: PART-STK-REAL
+        initialQuantity:
+          type: integer
+          minimum: 0
+          example: 25
+        minThreshold:
+          type: integer
+          minimum: 0
+          example: 8
+    UpdateThresholdRequestDTO:
+      type: object
+      required:
+        - partId
+        - minThreshold
+      properties:
+        partId:
+          type: string
+          description: "Part SKU code"
+          example: MH-SS-01
+        minThreshold:
+          type: integer
+          minimum: 0
+          example: 12
+        reason:
+          type: string
+          maxLength: 255
+          example: "Buffer threshold increased for Q4"
+    StockItemDTO:
+      type: object
+      properties:
+        partId:
+          type: string
+          example: MH-SS-01
+        partName:
+          type: string
+          example: "Man hinh Samsung loai 1"
+        category:
+          type: string
+          example: MAN_HINH
+        unit:
+          type: string
+          example: Cai
+        unitPrice:
+          type: number
+          example: 2200000
+        quantity:
+          type: integer
+          example: 25
+        minThreshold:
+          type: integer
+          example: 12
+        isLowStock:
+          type: boolean
+          example: false
+        updatedAt:
+          type: string
+          example: "2026-11-12T00:30:11"
+    ImportTransactionRequestDTO:
+      type: object
+      required:
+        - partId
+        - quantity
+        - performedBy
+      properties:
+        partId:
+          type: string
+          example: MH-SS-01
+        quantity:
+          type: integer
+          minimum: 1
+          example: 10
+        performedBy:
+          type: string
+          example: quanly_kho
+        note:
+          type: string
+          maxLength: 255
+          example: "Restock batch 10 units"
+    ExportTransactionRequestDTO:
+      type: object
+      required:
+        - ticketId
+        - partId
+        - quantity
+        - performedBy
+      properties:
+        ticketId:
+          type: string
+          example: TK-2026-001
+        partId:
+          type: string
+          example: MH-SS-01
+        quantity:
+          type: integer
+          minimum: 1
+          example: 1
+        performedBy:
+          type: string
+          example: ktv_trong
+        note:
+          type: string
+          maxLength: 255
+          example: "Warranty replacement for Galaxy S23"
+    TransactionResponseDTO:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: GD-XK-202611-63E5
+        transactionType:
+          type: string
+          enum:
+            - IMPORT
+            - EXPORT
+          example: EXPORT
+        partId:
+          type: string
+          example: MH-SS-01
+        partName:
+          type: string
+          example: "Man hinh Samsung loai 1"
+        ticketId:
+          type: string
+          nullable: true
+          example: TK-2026-001
+        quantity:
+          type: integer
+          example: 1
+        remainingStock:
+          type: integer
+          example: 33
+        isLowStock:
+          type: boolean
+          example: false
+        performedBy:
+          type: string
+          example: ktv_trong
+        note:
+          type: string
+          example: "Warranty replacement for Galaxy S23"
+        createdAt:
+          type: string
+          example: "2026-11-12T00:38:51.160805692"
+    TicketPartDTO:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: GD-XK-202611-63E5
+        partId:
+          type: string
+          example: MH-SS-01
+        partName:
+          type: string
+          example: "Man hinh Samsung loai 1"
+        quantity:
+          type: integer
+          example: 1
+        performedBy:
+          type: string
+          example: ktv_trong
+        exportDate:
+          type: string
+          example: "2026-11-12T00:38:51"
+    MetaDTO:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          format: int64
+          example: 125
+        totalPages:
+          type: integer
+          example: 13
+    ErrorDetail:
+      type: object
+      properties:
+        code:
+          type: string
+          example: FORBIDDEN
+        message:
+          type: string
+          example: "Yeu cau vai tro MANAGER"
+        details:
+          type: array
+          items:
+            type: string
+    ErrorApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          "$ref": "#/components/schemas/ErrorDetail"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-11-12T00:35:08.720"
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: UP
+        service:
+          type: string
+          example: inventory-service
+        module:
+          type: string
+          example: "L5 - Kho linh kien thay the"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-11-12T00:35:08.745762591"
+    LoginApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          "$ref": "#/components/schemas/LoginResponseDTO"
+        timestamp:
+          type: string
+          format: date-time
+    PartApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          "$ref": "#/components/schemas/PartResponseDTO"
+        timestamp:
+          type: string
+          format: date-time
+    PartListApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PartResponseDTO"
+        meta:
+          "$ref": "#/components/schemas/MetaDTO"
+        timestamp:
+          type: string
+          format: date-time
+    StockItemApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          "$ref": "#/components/schemas/StockItemDTO"
+        timestamp:
+          type: string
+          format: date-time
+    StockListApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockItemDTO"
+        meta:
+          "$ref": "#/components/schemas/MetaDTO"
+        timestamp:
+          type: string
+          format: date-time
+    TransactionApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          "$ref": "#/components/schemas/TransactionResponseDTO"
+        timestamp:
+          type: string
+          format: date-time
+    TransactionListApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TransactionResponseDTO"
+        meta:
+          "$ref": "#/components/schemas/MetaDTO"
+        timestamp:
+          type: string
+          format: date-time
+    TicketPartsApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TicketPartDTO"
+        timestamp:
+          type: string
+          format: date-time
+    StringApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: string
+          example: "Operation successful"
+        timestamp:
+          type: string
+          format: date-time

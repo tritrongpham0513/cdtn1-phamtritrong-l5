@@ -126,3 +126,10 @@
 - **Thay đổi gì:** Thêm `StartupReadiness` lắng nghe `ApplicationReadyEvent`; `GET /api/health` trả HTTP 503 `STARTING` trong lúc nạp dữ liệu và chỉ trả HTTP 200 `UP` khi seeder đã xong. `docker-compose.yml` dùng endpoint này cho healthcheck.
 - **Vì sao:** Trước khi sửa, Tomcat nhận request trước khi `CommandLineRunner` nạp xong 7.800 phiếu và 4.954 giao dịch, nên container có thể được báo `healthy` khi dữ liệu mẫu còn đang nạp. Việc này làm phép thử "hệ thống lên được và có dữ liệu mẫu" không ổn định trên máy chậm.
 - **Ảnh hưởng tới thành phần nào:** `StartupReadiness.java`, `HealthController.java`, `docker-compose.yml`, `README.md`.
+
+---
+
+### TD-BT3-06: Mật khẩu lưu dạng băm BCrypt trong bảng `users` (tiêu chí S3)
+- **Thay đổi gì:** Thêm entity `User`, `UserRepository`, bean `BCryptPasswordEncoder` trong `SecurityConfig`, migration `V2__add_users_table.sql` (bảng `users`, 3 tài khoản demo với `password_hash` BCrypt cost 10) và `seedUsers()` idempotent trong `DataInitializer`. `AuthController` bỏ hằng `MOCK_USERS` plaintext, đọc tài khoản từ CSDL và đối chiếu bằng `passwordEncoder.matches()`.
+- **Vì sao:** Trước khi sửa, mật khẩu `123456` nằm dạng plaintext ngay trong mã nguồn và CSDL không có bảng `users`, nên không đạt tiêu chí S3 (OWASP A04/A07). Sau khi sửa, kể cả đọc trực tiếp bảng `users` cũng không suy ra được mật khẩu gốc.
+- **Ảnh hưởng tới thành phần nào:** `pom.xml`, `entity/User.java`, `repository/UserRepository.java`, `config/SecurityConfig.java`, `controller/AuthController.java`, `config/DataInitializer.java`, `migrations/V2__add_users_table.sql`, `docs/checklist-bao-mat.md`, `docs/api-docs/README.md`, `docs/deployment-guide.md`.
