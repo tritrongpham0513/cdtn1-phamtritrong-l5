@@ -77,18 +77,19 @@ Kết quả tổng hợp từ Maven Surefire:
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  30.309 s
+[INFO] Total time:  26.777 s
+[INFO] Finished at: 2026-11-12T16:39:51+07:00
 ```
 
 Bảng tổng hợp chi tiết theo 4 lớp kiểm thử cấu thành 12 test cases (Khớp 100% Ảnh minh chứng 02):
 
 | Lớp test Java | Tầng kiểm thử | Số test | Thời gian chạy | Kết quả thực tế | Ghi chú môi trường |
 |---|---|---:|---:|:---:|---|
-| `PartTransactionServiceTest` | Unit (Service Logic) | 7 | 0.222 s | **7/7 PASS** | Dùng Mockito cô lập phụ thuộc, không truy xuất CSDL |
+| `PartTransactionServiceTest` | Unit (Service Logic) | 7 | 0.529 s | **7/7 PASS** | Dùng Mockito cô lập phụ thuộc, không truy xuất CSDL |
 | `DataInitializerIntegrationTest` | Integration (C8 Tái lập) | 1 | 14.530 s | **1/1 PASS** | `@SpringBootTest`, nạp dữ liệu thật từ `seeds/` vào H2 |
-| `PartTransactionIntegrationTest` | Integration (End-to-End H2) | 2 | 1.550 s | **2/2 PASS** | `@SpringBootTest` + H2 thật + `@Transactional` rollback |
+| `PartTransactionIntegrationTest` | Integration (End-to-End H2) | 2 | 2.326 s | **2/2 PASS** | `@SpringBootTest` + H2 thật + `@Transactional` rollback |
 | `TransactionControllerApiTest` | API Slice (MockMvc Controller) | 2 | 0.590 s | **2/2 PASS** | `MockMvcBuilders.standaloneSetup()` + Mockito service |
-| **Tổng cộng** | **Cả 3 tầng Kim tự tháp** | **12** | **30.309 s** | **12/12 PASS (100%)** | **0 failures, 0 errors, 0 skipped** |
+| **Tổng cộng** | **Cả 3 tầng Kim tự tháp** | **12** | **26.777 s** | **12/12 PASS (100%)** | **0 failures, 0 errors, 0 skipped** |
 
 ---
 

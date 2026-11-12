@@ -351,7 +351,7 @@ Ghi chú: lần chạy đầu trước khi sửa healthcheck MySQL báo exit 1 v
    $ .\mvnw.cmd test
    Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
    [INFO] BUILD SUCCESS
-   [INFO] Total time:  30.309 s
+   [INFO] Total time:  26.777 s
 
 9. User trong container:
    uid=100(mekonguser) gid=101(mekonggroup) groups=101(mekonggroup)
