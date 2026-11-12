@@ -617,5 +617,5 @@ cdtn1-phamtritrong-l5/
 - [x] **Thành phần 2 (Test Report):** Hoàn thành [`docs/test-report.md`](docs/test-report.md) báo cáo trung thực kết quả thực tế 12/12 PASS, bảng kết quả 8 cột và phân tích rủi ro.
 - [x] **Thành phần 3 (Bug Log):** Hoàn thành [`docs/bug-log.md`](docs/bug-log.md) ghi nhận 3 lỗi bảo mật có thật (SEC-01, SEC-02, SEC-03) kèm commit khắc phục và kịch bản tái lập.
 - [x] **Thành phần 4 (Gói đóng gói prototype):** Dockerfile đa tầng non-root (`mekonguser`), Docker Compose v2, healthcheck UP, tài liệu hóa hướng dẫn 2 lệnh và xử lý sự cố.
-- [x] **Thành phần 5 (Deployment Guide):** Hoàn thành [`docs/deployment-guide.md`](docs/deployment-guide.md) viết hoàn toàn bằng tiếng Anh, chuẩn 5 mục bắt buộc kèm Troubleshooting.
+- [x] **Thành phần 5 (Deployment Guide):** Hoàn thành [`docs/deployment-guide.md`](docs/deployment-guide.md) viết hoàn toàn bằng tiếng Anh, chuẩn 5 mục bắt buộc kèm Troubleshooting và mục ghi các bước deploy lên Cloud (+1,0 điểm cộng).
 - [x] **Thành phần 5 (Checklist bảo mật):** Hoàn thành [`docs/checklist-bao-mat.md`](docs/checklist-bao-mat.md) rà soát trung thực 7 mục OWASP Top 10 kèm minh chứng thật.
