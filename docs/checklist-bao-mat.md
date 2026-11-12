@@ -47,7 +47,7 @@ HTTP_CODE:422
 ```text
 # Minh chứng thủ công (Manual API check):
 # KTV Cần Thơ (Center 4) cố tình gửi header giả mạo X-Center-Id=1:
-$ Invoke-RestMethod -Uri "http://localhost:8088/api/v1/transactions/export" -Headers @{"Authorization"="Bearer mk_token_MTAzOmt0dl9jYW50aG86VEVDSE5JQ0lBTjo0OjE3OTQ0MjAxMDk0OTA=","X-Center-Id"="1"}
+$ Invoke-RestMethod -Uri "http://localhost:8088/api/v1/transactions/export" -Headers @{"Authorization"="Bearer mk_token_MTAz...[DEMO_TOKEN_MASKED]...OTA=","X-Center-Id"="1"}
 HTTP Status: 403 Forbidden
 Body: {"success":false,"error":{"code":"FORBIDDEN","message":"Từ chối truy cập (403 Forbidden): X-Center-Id=1 không khớp với trung tâm 4 của tài khoản 'ktv_cantho'."},"timestamp":"2026-11-12T01:01:49.764696299"}
 
