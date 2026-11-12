@@ -423,50 +423,52 @@ Phân bổ 12 test cases theo 5 loại kiểm thử chuẩn Bài tập 3 (7 Unit
 
 ### 5.1. Kịch bản cURL kiểm thử nhanh các Endpoint CRUD & Quy tắc nghiệp vụ (Dành cho Giảng viên chấm)
 
+> **Lưu ý cổng kết nối:** Các lệnh cURL bên dưới sử dụng cổng **`http://localhost:8088`** khi hệ thống khởi động qua Docker Compose (Thành phần 4). Trường hợp chạy trực tiếp qua `./mvnw spring-boot:run` trên máy trạm, vui lòng đổi cổng thành `8080`.
+
 Sau khi khởi động backend, Giảng viên có thể mở terminal và thực thi các câu lệnh `curl` sau để kiểm chứng trực tiếp:
 
 #### A. Thực thể 1: Part (Danh mục linh kiện) — Đủ 4 thao tác CRUD:
 ```bash
 # 1. Tạo mới linh kiện (Create - POST)
-curl -X POST http://localhost:8080/api/v1/parts \
+curl -X POST http://localhost:8088/api/v1/parts \
   -H "Content-Type: application/json" \
   -d '{"partCode":"PIN-IP-15","partName":"Pin iPhone 15 Pro Max chính hãng","category":"PIN","unit":"Cái","unitPrice":1250000.00}'
 
 # 2. Đọc danh sách và chi tiết linh kiện (Read - GET)
-curl http://localhost:8080/api/v1/parts?keyword=iPhone
-curl http://localhost:8080/api/v1/parts/PIN-IP-15
+curl http://localhost:8088/api/v1/parts?keyword=iPhone
+curl http://localhost:8088/api/v1/parts/PIN-IP-15
 
 # 3. Cập nhật thông tin linh kiện (Update - PUT)
-curl -X PUT http://localhost:8080/api/v1/parts/PIN-IP-15 \
+curl -X PUT http://localhost:8088/api/v1/parts/PIN-IP-15 \
   -H "Content-Type: application/json" \
   -d '{"partName":"Pin iPhone 15 Pro Max Zin New 100%","category":"PIN","unit":"Cái","unitPrice":1350000.00,"isActive":true}'
 
 # 4. Xóa linh kiện (Delete - DELETE: Soft delete chuyển isActive = false)
-curl -X DELETE http://localhost:8080/api/v1/parts/PIN-IP-15
+curl -X DELETE http://localhost:8088/api/v1/parts/PIN-IP-15
 ```
 
 #### B. Thực thể 2: PartStock (Tồn kho trung tâm) — Đủ 4 thao tác CRUD:
 ```bash
 # 1. Khởi tạo bản ghi tồn kho tại TTBH Quận 10 (Create - POST: Yêu cầu quyền Quản lý kho)
-curl -X POST http://localhost:8080/api/v1/stock \
+curl -X POST http://localhost:8088/api/v1/stock \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
   -H "Authorization: Bearer mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMjQ4MDcy" \
   -d '{"partCode":"PIN-IP-15","initialQuantity":20,"minThreshold":5}'
 
 # 2. Tra cứu danh sách tồn kho và chi tiết (Read - GET)
-curl -H "X-Center-Id: 1" http://localhost:8080/api/v1/stock?isLowStock=false
-curl -H "X-Center-Id: 1" http://localhost:8080/api/v1/stock/PIN-IP-15
+curl -H "X-Center-Id: 1" http://localhost:8088/api/v1/stock?isLowStock=false
+curl -H "X-Center-Id: 1" http://localhost:8088/api/v1/stock/PIN-IP-15
 
 # 3. Điều chỉnh ngưỡng tồn tối thiểu (Update - PUT: Yêu cầu quyền Quản lý kho theo UC-07)
-curl -X PUT http://localhost:8080/api/v1/stock/threshold \
+curl -X PUT http://localhost:8088/api/v1/stock/threshold \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
   -H "Authorization: Bearer mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMjQ4MDcy" \
   -d '{"partCode":"PIN-IP-15","minThreshold":8}'
 
 # 4. Xóa bản ghi tồn kho khi số lượng tồn bằng 0 (Delete - DELETE)
-curl -X DELETE http://localhost:8080/api/v1/stock/PIN-IP-15 \
+curl -X DELETE http://localhost:8088/api/v1/stock/PIN-IP-15 \
   -H "X-Center-Id: 1" \
   -H "Authorization: Bearer mk_token_MjpxdWFubHlfa2hvOk1BTkFHRVI6MToxNzk0NDIyMjQ4MDcy"
 ```
@@ -476,7 +478,7 @@ curl -X DELETE http://localhost:8080/api/v1/stock/PIN-IP-15 \
 ```bash
 # Quy tắc 1 (QT-09 & NFR-02): Khóa bi quan chống xuất âm kho (Cố tình xuất 999 cái vượt tồn kho)
 # -> Hệ thống từ chối ngay lập tức với HTTP 400 và thông báo vi phạm tồn kho
-curl -X POST http://localhost:8080/api/v1/transactions/export \
+curl -X POST http://localhost:8088/api/v1/transactions/export \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
   -H "Authorization: Bearer mk_token_MTprdHZfdHJvbmc6VEVDSE5JQ0lBTjoxOjE3OTQ0MjIyNDc5MTM=" \
@@ -484,7 +486,7 @@ curl -X POST http://localhost:8080/api/v1/transactions/export \
 
 # Quy tắc 2 (QT-06): Từ chối xuất cho Phiếu bảo hành đã đóng hoặc không tồn tại
 # -> Hệ thống từ chối với HTTP 400 kèm thông báo trạng thái phiếu không hợp lệ
-curl -X POST http://localhost:8080/api/v1/transactions/export \
+curl -X POST http://localhost:8088/api/v1/transactions/export \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
   -H "Authorization: Bearer mk_token_MTprdHZfdHJvbmc6VEVDSE5JQ0lBTjoxOjE3OTQ0MjIyNDc5MTM=" \
@@ -492,7 +494,7 @@ curl -X POST http://localhost:8080/api/v1/transactions/export \
 
 # Quy tắc bổ sung (QT-14 & RBAC): Kỹ thuật viên cố tình thực hiện thao tác Nhập kho
 # -> Hệ thống từ chối với HTTP 403 Forbidden
-curl -X POST http://localhost:8080/api/v1/transactions/import \
+curl -X POST http://localhost:8088/api/v1/transactions/import \
   -H "Content-Type: application/json" \
   -H "X-Center-Id: 1" \
   -H "Authorization: Bearer mk_token_MTprdHZfdHJvbmc6VEVDSE5JQ0lBTjoxOjE3OTQ0MjIyNDc5MTM=" \
